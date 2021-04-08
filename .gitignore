@@ -30,6 +30,8 @@
 *.exe
 *.out
 *.app
+
 /snakeGame/snakeGame
 /snakeGame
 /.vs
+/!*.cpp
