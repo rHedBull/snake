@@ -27,11 +27,11 @@
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
+*.exe
 
-/snakeGame/snakeGame
-/snakeGame
+/snakeGameSolution/snakeGame
+/snakeGameSolution/Debug
 /.vs
-/!*.cpp
+/snakeGameSolution
