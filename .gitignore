@@ -31,7 +31,7 @@
 *.app
 *.exe
 
-/snakeGameSolution/snakeGame
-/snakeGameSolution/Debug
 /.vs
-/snakeGameSolution
+/snakeGame/Debug
+/snakeGame/.vs/snakeGame/v16
+/snakeGame
