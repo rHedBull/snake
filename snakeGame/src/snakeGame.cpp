@@ -1,13 +1,20 @@
 // snakeGame.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <iostream>
 #include <SFML/Graphics.hpp>
-#include "Header.h"
+#include "Rectangle.h"
 
-void test02() {
+void test() {
+    
+    
+ 
+}
+
+void gameLoop() {
+
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    Rectangle rec(100, 200);
 
     while (window.isOpen())
     {
@@ -18,17 +25,22 @@ void test02() {
                 window.close();
         }
 
+    
+
         window.clear();
-        window.draw(shape);
+        window.draw(rec);
         window.display();
     }
 }
 
 int main()
-{
-    test();
-    test02();
+{   
+    gameLoop();
     return 0;
 }
 
+void grid(int width, int height) {
+    int rows = width / 30;
 
+    
+}

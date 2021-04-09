@@ -31,7 +31,10 @@
 *.app
 *.exe
 
-/.vs
 /snakeGame/Debug
 /snakeGame/.vs/snakeGame/v16
-/snakeGame
+/snakeGame/snakeGame.sln
+/snakeGame/snakeGame.vcxproj
+/snakeGame/snakeGame.vcxproj.filters
+/snakeGame/snakeGame.vcxproj.user
+/.vs
