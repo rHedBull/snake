@@ -14,16 +14,16 @@
 
 
 void test() {
-    Util u;
 
-    u.logger(1, "loger started nominal");
-    u.logger(2, " hohpefully this still works fine ?");
+    logger(1, "loger started nominal");
+    logger(2, " hohpefully this still works fine ?");
  
 }
 
 void gameLoop() {
 
     Game game;
+    logger(1, "game loop starts");
 
     while (game.running())
     {
@@ -39,10 +39,12 @@ void gameLoop() {
         //window.draw(rec);
         //window.display();
     }
+    logger(1, "game loop ended");
 }
 
 int main()
 {   
+    
     test();
     //gameLoop();
     return 0;

@@ -11,12 +11,20 @@ class Game
 {
 private:
 
+	// window variables
 	sf::RenderWindow* window;
 	sf::Event ev;
 	sf::VideoMode videoMode;
 
 	void initVariables();
 	void initWindow();
+
+	// Game objects
+	sf::RectangleShape enemy;
+
+	//private functions
+
+	void init_enemies();
 
 public:
 	//constructors && destructors

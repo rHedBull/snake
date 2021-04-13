@@ -1,15 +1,21 @@
 #include "Game.h"
+#include "Util.h"
 
 //constructor:
 Game::Game()
 {
-
+	logger(1, "intialize game");
+	this->initVariables();
+	this->initWindow();
+	this->init_enemies();
+	logger(1, "game initialized");
 }
 
 //destructor:
 Game::~Game() 
 {
 	delete this->window;
+	logger(1, "window deleted");
 }
 
 //private functions:
@@ -17,13 +23,28 @@ Game::~Game()
 void Game::initVariables() 
 {
 	this->window = nullptr;
+	logger(1, "game variables initialized");
 }
 
 void Game::initWindow()
 {
+	
 	this->videoMode.height = (600);
 	this->videoMode.width = (600);
 	this->window = new sf::RenderWindow(this->videoMode, "SnakeGame", sf::Style::Titlebar | sf::Style::Close);
+
+	this->window->setFramerateLimit(70);
+	logger(1, "window initialized");
+	
+}
+
+void Game::init_enemies() {
+	this->enemy.setPosition(10.f, 10.f);
+	this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+	this->enemy.setFillColor(sf::Color::Cyan);
+	this->enemy.setOutlineColor(sf::Color::Green);
+	this->enemy.setOutlineThickness(1.f);
+	logger(1, "enemies initialized");
 }
 
 //accessors:
@@ -61,8 +82,10 @@ void Game::render()
 	*	- render objects
 	*	- display new frame in window
 	*/
+	
+	this->window->clear();
 
-	this->window->clear(sf::Color(255, 0, 0));
+	this->window->draw(this->enemy);
 
 	//draw game:
 	this->window -> display();

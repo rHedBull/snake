@@ -3,9 +3,7 @@
 #include <fstream>
 #include <string>
 
-// public functions:
-
-string Util::logger(int level, string message)
+string logger(int level, string message)
 {
     /*(
     * input: 
