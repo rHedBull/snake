@@ -7,7 +7,7 @@ Game::Game()
 	logger(1, "intialize game");
 	this->initVariables();
 	this->initWindow();
-	this->init_enemies();
+	//this->init_enemies();
 	logger(1, "game initialized");
 }
 
@@ -85,7 +85,7 @@ void Game::render()
 	
 	this->window->clear();
 
-	this->window->draw(this->enemy);
+	this->player.render(this->window);
 
 	//draw game:
 	this->window -> display();

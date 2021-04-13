@@ -7,6 +7,8 @@
 #include <SFML/Network.hpp>
 #include <SFML/Window.hpp>
 
+#include "Player.h"
+
 class Game
 {
 private:
@@ -20,7 +22,8 @@ private:
 	void initWindow();
 
 	// Game objects
-	sf::RectangleShape enemy;
+	Player player;
+	//sf::RectangleShape enemy;
 
 	//private functions
 

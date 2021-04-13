@@ -24,10 +24,13 @@ string logger(int level, string message)
     {
     case 1:
         l = "INFO";
+        break;
     case 2:
         l = "Warning";
+        break;
     case 3:
         l = "Failure";
+        break;
     }
 
     // generate date and time

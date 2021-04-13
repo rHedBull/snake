@@ -8,15 +8,12 @@
 #include <SFML/Network.hpp>
 #include <SFML/Window.hpp>
 
-#include "Rectangle.h"
 #include "Game.h"
 #include "Util.h"
+#include "Player.h"
 
 
 void test() {
-
-    logger(1, "loger started nominal");
-    logger(2, " hohpefully this still works fine ?");
  
 }
 
@@ -45,15 +42,9 @@ void gameLoop() {
 int main()
 {   
     
-    test();
-    //gameLoop();
+    //test();
+    gameLoop();
     return 0;
-}
-
-void grid(int width, int height) {
-    int rows = width / 30;
-
-    
 }
 
 /* next: get rectangle actually displayed
