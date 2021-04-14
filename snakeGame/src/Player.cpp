@@ -33,7 +33,27 @@ void Player::initShape()
 
 void Player::initVariables()
 {
-	this->movementSpeed = 60;
+	this->setMovementSpeed(1.f);
+	this->setMovementDirection(1);
+}
+
+void Player::moving()
+{
+	// moves the player every time the function is called in the movementDirection
+	// 	   so that he moves continuously
+
+	//left
+	if(this->getMovementDirection() == 3)
+		this->shape.move(-this->getMovementSpeed(), 0.f);
+	//right
+	else if (this->getMovementDirection() == 1)
+		this->shape.move(this->getMovementSpeed(), 0.f);
+	//down
+	else if (this->getMovementDirection() == 2)
+		this->shape.move(0.f, this->getMovementSpeed());
+	//up
+	else if (this->getMovementDirection() == 4)
+		this->shape.move(0.f , -this->getMovementSpeed());
 }
 
 
@@ -43,6 +63,8 @@ void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWi
 	//get keystrokes
 	this->updateInput();
 
+	//move player in direction
+	this->moving();
 
 	//window bounds collision
 	//targetWindow->getSize();
@@ -51,25 +73,25 @@ void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWi
 
 void Player::updateInput() {
 	//keypoard input
-	this->movementSpeed = 10;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		this->shape.move(-this->movementSpeed, 0.f);
+		this->setMovementDirection(3); // to the left
+		
 
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D ) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		this->shape.move(this->movementSpeed, 0.f);
+		this->setMovementDirection(1); // to the right
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		this->shape.move(0.f, -this->movementSpeed);
+		this->setMovementDirection(4); // upward
 
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		this->shape.move(0.f, this->movementSpeed);
+		this->setMovementDirection(2); // downwards
 	}
 
 }
@@ -99,4 +121,23 @@ void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 void Player::render(sf::RenderTarget * targetWindow)
 {
 	targetWindow->draw(this->shape);
+}
+
+//accesors
+void Player::setMovementDirection(int d)
+{
+	this->movementDirection = d;
+}
+int Player::getMovementDirection()
+{
+	return this->movementDirection;
+}
+
+void Player::setMovementSpeed(float s)
+{
+	this->movementSpeed = s;
+}
+float Player::getMovementSpeed()
+{
+	return this->movementSpeed;
 }
