@@ -1,7 +1,23 @@
 #include "Player.h"
 #include "Util.h"
 
+//constructor
+Player::Player()
+{
+	//this->shape.setPosition(pos_x, pos_y);
 
+	this->initShape();
+	this->initVariables();
+	//logger(1, "player created at x:" + std::to_string(pos_x) + ", y:" + std::to_string(pos_y));
+}
+
+//destructor
+Player::~Player()
+{
+	logger(1, "player destroyed");
+}
+
+//private functions
 void Player::initShape()
 {
 	float x_pos = 100.f;
@@ -19,6 +35,8 @@ void Player::initVariables()
 	this->movementSpeed = 60;
 }
 
+
+//public functions
 void Player::update() //sf::RenderTarget* targetWindow
 {
 	//window bounds collision
@@ -56,18 +74,4 @@ void Player::updateInput() {
 void Player::render(sf::RenderTarget * targetWindow)
 {
 	targetWindow->draw(this->shape);
-}
-
-Player::Player()
-{
-	//this->shape.setPosition(pos_x, pos_y);
-
-	this->initShape();
-	this->initVariables();
-	//logger(1, "player created at x:" + std::to_string(pos_x) + ", y:" + std::to_string(pos_y));
-}
-
-Player::~Player()
-{
-	logger(1, "player destroyed");
 }

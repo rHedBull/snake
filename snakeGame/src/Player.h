@@ -9,18 +9,23 @@
 class Player
 {
 private:
+	//private variables
 	sf::RectangleShape shape;
 	int movementSpeed;
 
+	//private functions
 	void initVariables();
 	void initShape();
 
 public:
 
-	//constructor && destructor
+	//constructor
 	Player();
+
+	//destructor
 	~Player();
 
+	//public functions
 	void update();
 	void updateInput();
 	void render(sf::RenderTarget* targetWindow);

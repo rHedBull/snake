@@ -15,7 +15,9 @@ class Game
 {
 private:
 
-	// window variables
+	//private variables
+	
+	//window variables
 	sf::RenderWindow* window;
 	sf::Event ev;
 	sf::VideoMode videoMode;
@@ -24,22 +26,23 @@ private:
 	int frameRate;
 	string name;
 
-	void initVariables();
-	void initWindow();
-
 	// Game objects
-	// player object is created as part of game init
-	Player player;
+	Player player;  // player object is created as part of game init
 
 	//sf::RectangleShape enemy;
+	
 
 	//private functions
+	void initVariables();
+	void initWindow();
 
 	void init_enemies();
 
 public:
-	//constructors && destructors
+	//constructor
 	Game(int width, int height, int frameRate, string name);
+
+	//destructor
 	~Game();
 	
 	//accessors:
@@ -57,7 +60,7 @@ public:
 	void setName(string n);
 	string getName();
 
-	//Functions
+	// public functions
 	void pollEvents();
 	void update();
 	void render();
