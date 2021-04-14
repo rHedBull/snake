@@ -16,21 +16,40 @@ void Player::initShape()
 
 void Player::initVariables()
 {
-
+	this->movementSpeed = 60;
 }
 
 void Player::update()
 {
 	//window bounds collision
 	
+	updateInput();
 	
+}
+
+void Player::updateInput() {
 	//keypoard input
 	this->movementSpeed = 10;
 
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		this->
-	}*/
+		this->shape.move(-this->movementSpeed, 0.f);
+
+	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		this->shape.move(this->movementSpeed, 0.f);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		this->shape.move(0.f, -this->movementSpeed);
+
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		this->shape.move(0.f, this->movementSpeed);
+	}
+
 }
 
 void Player::render(sf::RenderTarget * targetWindow)

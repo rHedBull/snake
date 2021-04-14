@@ -10,6 +10,7 @@ class Player
 {
 private:
 	sf::RectangleShape shape;
+	int movementSpeed;
 
 	void initVariables();
 	void initShape();
@@ -21,6 +22,7 @@ public:
 	~Player();
 
 	void update();
+	void updateInput();
 	void render(sf::RenderTarget* targetWindow);
 
 };
