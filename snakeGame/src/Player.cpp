@@ -19,11 +19,12 @@ void Player::initVariables()
 	this->movementSpeed = 60;
 }
 
-void Player::update()
+void Player::update() //sf::RenderTarget* targetWindow
 {
 	//window bounds collision
-	
-	updateInput();
+	//targetWindow->getSize();
+
+	this->updateInput();
 	
 }
 
@@ -31,21 +32,21 @@ void Player::updateInput() {
 	//keypoard input
 	this->movementSpeed = 10;
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->shape.move(-this->movementSpeed, 0.f);
 
-	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D ) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		this->shape.move(this->movementSpeed, 0.f);
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->shape.move(0.f, -this->movementSpeed);
 
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		this->shape.move(0.f, this->movementSpeed);
 	}
