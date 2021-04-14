@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Util.h"
+#include "Game.h"
 
 //constructor
 Player::Player()
@@ -37,13 +38,15 @@ void Player::initVariables()
 
 
 //public functions
-void Player::update() //sf::RenderTarget* targetWindow
+void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWindow
 {
+	//get keystrokes
+	this->updateInput();
+
+
 	//window bounds collision
 	//targetWindow->getSize();
-
-	this->updateInput();
-	
+	this->updateWindowBoundsCollision(targetWindow);
 }
 
 void Player::updateInput() {
@@ -69,6 +72,28 @@ void Player::updateInput() {
 		this->shape.move(0.f, this->movementSpeed);
 	}
 
+}
+
+void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
+{
+	sf::FloatRect playerBounds = this->shape.getGlobalBounds();
+
+	//Up
+	if (playerBounds.top <= 0.f)
+		this->shape.setPosition(playerBounds.left, 0.f);
+	//Down
+	else if (playerBounds.top + playerBounds.height >= target->getSize().y)
+		this->shape.setPosition(playerBounds.left, target->getSize().y - playerBounds.height);
+
+	//Left
+	if (playerBounds.left <= 0.f)
+		this->shape.setPosition(0.f, playerBounds.top);
+		//Right
+	else if (playerBounds.left + playerBounds.width >= target->getSize().x)
+		this->shape.setPosition(target->getSize().x - playerBounds.width, playerBounds.top);
+	
+
+	
 }
 
 void Player::render(sf::RenderTarget * targetWindow)
