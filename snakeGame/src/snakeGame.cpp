@@ -19,7 +19,7 @@ void test() {
 
 void gameLoop() {
 
-    Game game;
+    Game game(600, 600, 70, "Snake Game");
     logger(1, "game loop starts");
 
     while (game.running())
