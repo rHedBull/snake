@@ -7,5 +7,8 @@
 #### another guide: https://www.youtube.com/watch?v=yEiZalvDOj4&list=PL6xSOsbVA1eaJnHo_O6uB4qU8LZWzzKdo
 
 ----------------------------------------------------------------------------------------------------------------
+## resources:
+### very helpful playlist: https://youtube.com/playlist?list=PL6xSOsbVA1eb_QqMTTcql_3PdOiE928up
+
 ## goal
 simple snake game
