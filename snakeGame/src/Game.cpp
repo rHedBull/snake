@@ -129,6 +129,7 @@ void Game::render()
 	this->window->clear();
 
 	this->player.render(this->window);
+	this->ball.render(this->window);
 
 	//draw game:
 	this->window -> display();
@@ -139,5 +140,6 @@ void Game::update()
 	this->pollEvents();
 
 	this->player.update(this->window);
+	this->ball.update();
 
 }

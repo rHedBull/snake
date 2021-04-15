@@ -9,7 +9,6 @@ Player::Player()
 
 	this->initShape();
 	this->initVariables();
-	//logger(1, "player created at x:" + std::to_string(pos_x) + ", y:" + std::to_string(pos_y));
 }
 
 //destructor
@@ -24,7 +23,7 @@ void Player::initShape()
 	float x_pos = 100.f;
 	float y_pos = 100.f;
 
-	this->shape.setFillColor(sf::Color::Red);
+	this->shape.setFillColor(sf::Color::Green);
 	this->shape.setSize(sf::Vector2f(100.f, 100.f));
 	this->shape.setPosition(x_pos, y_pos);
 	logger(1, "player shape initialized at x:" + std::to_string(x_pos) + ", y:" + std::to_string(y_pos));

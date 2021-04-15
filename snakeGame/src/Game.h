@@ -10,6 +10,7 @@
 
 #include "Player.h"
 #include "Util.h"
+#include "Ball.h"
 
 class Game
 {
@@ -28,6 +29,7 @@ private:
 
 	// Game objects
 	Player player;  // player object is created as part of game init
+	Ball ball;
 
 	//sf::RectangleShape enemy;
 	
