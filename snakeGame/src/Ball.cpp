@@ -3,33 +3,16 @@
 #include "Game.h"
 
 
-
-//constructor
-Ball::Ball()
-{
-	this->initVars();
-	this->initShape(600, 600); // here enter dimensions of game window
-
-}
-
-//destructor
-Ball::~Ball()
-{
-	
-	logger(1, "Ball has been deleted");
-}
-
-//private variables
-
-
 //private functions
 void Ball::initVars() {
+	//initialize variables
 	this->setRadius(50);
 }
 
 void Ball::initShape(int x, int y)
 {
 	//random positions between 0 and 600/ width/ height of window
+	// here must somewhere be an error!, sometimes balls spawn partyl outside the game window
 	int r = this->getRadius();
 	int x_max = x - r;
 	int y_max = y - r;
@@ -44,6 +27,36 @@ void Ball::initShape(int x, int y)
 	
 }
 
+
+//constructor
+Ball::Ball()
+{
+	this->initVars();
+	this->initShape(600, 600); // here enter dimensions of game window
+
+}
+
+//destructor
+Ball::~Ball()
+{
+
+	logger(1, "Ball has been deleted");
+}
+
+
+//public functions
+void Ball::update()
+{
+
+}
+
+void Ball::render(sf::RenderTarget* targetWindow)
+{
+	//render ball to game window
+	targetWindow->draw(this->shape);
+}
+
+
 //accesors
 void Ball::setRadius(int r)
 {
@@ -56,16 +69,6 @@ int Ball::getRadius()
 
 const sf::CircleShape Ball::getShape() const
 {
+	// returns the shape of this ball
 	return this->shape;
-}
-
-//public functions
-void Ball::update()
-{
-
-}
-
-void Ball::render(sf::RenderTarget* targetWindow)
-{
-	targetWindow->draw(this->shape);
 }

@@ -1,5 +1,5 @@
 // snakeGame.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
@@ -35,9 +35,6 @@ void gameLoop() {
         //render
         game.render();
 
-
-        //window.draw(rec);
-        //window.display();
     }
     logger(1, "game loop ended");
 }
@@ -51,11 +48,3 @@ int main()
     gameLoop();
     return 0;
 }
-
-/* next: get rectangle actually displayed
- finish rectangle class
-    - getters/ setters for position
-    - let object be drawn
-    - move object
-    - let object disappear
- */

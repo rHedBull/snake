@@ -2,21 +2,6 @@
 #include "Util.h"
 #include "Game.h"
 
-//constructor
-Player::Player()
-{
-	//this->shape.setPosition(pos_x, pos_y);
-
-	this->initShape();
-	this->initVariables();
-}
-
-//destructor
-Player::~Player()
-{
-	logger(1, "player destroyed");
-}
-
 //private functions
 void Player::initShape()
 {
@@ -56,6 +41,22 @@ void Player::moving()
 }
 
 
+//constructor
+Player::Player()
+{
+	//this->shape.setPosition(pos_x, pos_y);
+
+	this->initShape();
+	this->initVariables();
+}
+
+//destructor
+Player::~Player()
+{
+	logger(1, "player destroyed");
+}
+
+
 //public functions
 void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWindow
 {
@@ -68,10 +69,19 @@ void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWi
 	//window bounds collision
 	//targetWindow->getSize();
 	this->updateWindowBoundsCollision(targetWindow);
+
+	//update the players collected balls
+	//updateCollectedBalls();
+
+}
+
+void Player::updateCollectedBalls()
+{
+
 }
 
 void Player::updateInput() {
-	//keypoard input
+	//keypoard input collects the change of directions by ASWD and arrow keys
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
@@ -97,6 +107,7 @@ void Player::updateInput() {
 
 void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
+	//checks continuously for collision with game Window borders
 	//Up
 	if (shape.getGlobalBounds().top <= 0.f)
 		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
@@ -117,11 +128,13 @@ void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 
 void Player::render(sf::RenderTarget * targetWindow)
 {
+	//render player shape to game window
 	targetWindow->draw(this->shape);
 }
 
 const sf::RectangleShape & Player::getShape() const
 {
+	//returns the player's shape
 	return this->shape;
 }
 
@@ -142,4 +155,14 @@ void Player::setMovementSpeed(float s)
 float Player::getMovementSpeed()
 {
 	return this->movementSpeed;
+}
+
+void Player::addBall(Ball b)
+{
+	this->collectedBalls.push_back(b); // pushes Ball into player's collection of balls vector
+	logger(1, "added ball to vector collectedBalls");
+}
+int Player::getPlayerBallsLength()
+{
+	return sizeof(this->collectedBalls);
 }

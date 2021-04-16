@@ -5,6 +5,9 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <SFML/Window.hpp>
+#include <vector>
+
+#include "Ball.h"
 
 class Player
 {
@@ -23,8 +26,10 @@ private:
 	//private functions
 	void initVariables();
 	void initShape();
-	void moving(); // test
+	void moving(); 
+	void updateCollectedBalls();
 
+	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
 
 public:
 
@@ -34,12 +39,6 @@ public:
 	//destructor
 	~Player();
 
-	//accesors
-	void setMovementDirection(int d);
-	int getMovementDirection();
-
-	void setMovementSpeed(float s);
-	float getMovementSpeed();
 
 	//public functions
 	const sf::RectangleShape& getShape() const;
@@ -49,5 +48,15 @@ public:
 	void updateWindowBoundsCollision(const sf::RenderTarget* target);
 	void render(sf::RenderTarget* targetWindow);
 
+
+	//accesors
+	void setMovementDirection(int d);
+	int getMovementDirection();
+
+	void setMovementSpeed(float s);
+	float getMovementSpeed();
+
+	void addBall(Ball b);
+	int getPlayerBallsLength();
 };
 

@@ -2,39 +2,17 @@
 #include "Util.h"
 
 
-//constructor:
-Game::Game(int width, int height, int frameRate , string name)
-{
-	this->setFrameRate(frameRate);
-	this->setHeight(height);
-	this->setWidth(width);
-	this->setName(name);
-
-	
-	logger(1, "intialize game");
-	this->initVariables();
-	this->initWindow();
-	//this->init_enemies();
-	logger(1, "game initialized");
-}
-
-//destructor:
-Game::~Game() 
-{
-	delete this->window;
-	logger(1, "window deleted");
-}
-
 //private functions:
-
 void Game::initVariables() 
 {
+	//initialize game variables
 	this->window = nullptr;
 	logger(1, "game variables initialized");
 }
 
 void Game::initWindow()
 {
+	//initialize window
 	this->videoMode.height = (this->height);
 	this->videoMode.width = (this->width);
 	this->window = new sf::RenderWindow(this->videoMode, this->name , sf::Style::Titlebar | sf::Style::Close);
@@ -44,20 +22,107 @@ void Game::initWindow()
 	
 }
 
-/*
-void Game::init_enemies() {
-	this->enemy.setPosition(10.f, 10.f);
-	this->enemy.setSize(sf::Vector2f(100.f, 100.f));
-	this->enemy.setFillColor(sf::Color::Cyan);
-	this->enemy.setOutlineColor(sf::Color::Green);
-	this->enemy.setOutlineThickness(1.f);
-	logger(1, "enemies initialized");
-}*/
+void Game::ballSpawn()
+{
+	//spawn the newest ball
+	Ball ball;
+	addBall(ball); // pushes the newly created ball into the Game classes vector newBall
+}
+
+
+//constructor:
+Game::Game(int width, int height, int frameRate, string name)
+{
+	this->setFrameRate(frameRate);
+	this->setHeight(height);
+	this->setWidth(width);
+	this->setName(name);
+
+
+	logger(1, "intialize game");
+	this->initVariables();
+	this->initWindow();
+	this->ballSpawn();
+	logger(1, "game initialized");
+}
+
+//destructor:
+Game::~Game()
+{
+	delete this->window;
+	logger(1, "window deleted");
+}
+
+
+//public functions:
+void Game::pollEvents()
+{
+	//Event polling
+		while (this->window->pollEvent(this->ev))
+		{
+			switch (this->ev.type)
+			{
+				case sf::Event::Closed:
+					this->window->close();
+					break;
+
+				case sf::Event::KeyPressed:
+					if (this->ev.key.code == sf::Keyboard::Escape)
+						this->window->close();
+					break;
+			}
+		}
+}
+
+void Game::render()
+{
+	/* render the game objects
+	*	- clear old frame
+	*	- render objects
+	*	- display new frame in window
+	*/
+	
+	this->window->clear(); //clear
+
+	//render objects
+	this->player.render(this->window);
+	this->newBall[0].render(this->window);
+	
+	//draw game:
+	this->window -> display();
+}
+
+void Game::update()
+{
+	// poll for newest events(keypress, ...)
+	this->pollEvents();
+
+	//update different objects
+	this->player.update(this->window); //only one instance of player
+	this->newBall[0].update();
+	
+	//update interactions between multiple objects
+	this->updateCollision();
+}
+
+void Game::updateCollision()
+{
+	// updates collision between player and newest ball
+		if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
+		{
+			logger(1, "collision occured!");
+			this->player.addBall(this->newBall[0]); // moves newest ball to player's ball collection
+			this->deleteBall(); // deletes Ball from Game classes vector newBall
+			//this->newBall.~Ball();
+			this->ballSpawn(); // creates new ball
+		}
+}
 
 
 //accessors:
 const bool Game::running() const
 {
+	// test if the game window still is opened
 	return this->window->isOpen();
 }
 
@@ -97,61 +162,13 @@ string Game::getName()
 	return this->name;
 }
 
-
-//public functions:
-
-void Game::pollEvents()
+void Game::addBall(Ball b)
 {
-	//Event polling
-		while (this->window->pollEvent(this->ev))
-		{
-			switch (this->ev.type)
-			{
-				case sf::Event::Closed:
-					this->window->close();
-					break;
-
-				case sf::Event::KeyPressed:
-					if (this->ev.key.code == sf::Keyboard::Escape)
-						this->window->close();
-					break;
-			}
-		}
+	//add ball to vector newBall of the Game class
+	this->newBall.push_back(b); // vector newBall always has only one element so at index = 0
 }
-
-void Game::render()
+void Game::deleteBall()
 {
-	/* render the game objects
-	*	- clear old frame
-	*	- render objects
-	*	- display new frame in window
-	*/
-	
-	this->window->clear();
-
-
-	this->player.render(this->window);
-	this->ball.render(this->window);
-
-	//draw game:
-	this->window -> display();
-}
-
-void Game::update()
-{
-	this->pollEvents();
-
-	this->player.update(this->window);
-	this->ball.update();
-	this->updateCollision();
-
-}
-
-void Game::updateCollision()
-{
-	if (this->player.getShape().getGlobalBounds().intersects(this->ball.getShape().getGlobalBounds()))
-	{
-		logger(1, "collision occured!");
-		this->ball.~Ball();
-	}
+	//delete ball from the vector newBall from this instance's Game class
+	this->newBall.pop_back();
 }
