@@ -8,14 +8,15 @@
 Ball::Ball()
 {
 	this->initVars();
-	this->initShape(600,600);
+	this->initShape(600, 600); // here enter dimensions of game window
 
 }
 
 //destructor
 Ball::~Ball()
 {
-
+	
+	logger(1, "Ball has been deleted");
 }
 
 //private variables
@@ -51,6 +52,11 @@ void Ball::setRadius(int r)
 int Ball::getRadius()
 {
 	return this->radius;
+}
+
+const sf::CircleShape Ball::getShape() const
+{
+	return this->shape;
 }
 
 //public functions

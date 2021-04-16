@@ -29,6 +29,8 @@ public:
 	void setRadius(int r);
 	int getRadius();
 
+	const sf::CircleShape getShape() const;
+
 	//public functions
 	void update();
 	void render(sf::RenderTarget* targetWindow);

@@ -29,7 +29,7 @@ private:
 
 	// Game objects
 	Player player;  // player object is created as part of game init
-	Ball ball;
+	Ball ball; // set Game window dimensions here
 
 	//sf::RectangleShape enemy;
 	
@@ -37,8 +37,9 @@ private:
 	//private functions
 	void initVariables();
 	void initWindow();
+	
 
-	void init_enemies();
+	//void init_enemies();
 
 public:
 	//constructor
@@ -66,6 +67,7 @@ public:
 	void pollEvents();
 	void update();
 	void render();
+	void updateCollision();
 
 };
 

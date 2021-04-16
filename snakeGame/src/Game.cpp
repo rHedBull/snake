@@ -10,6 +10,7 @@ Game::Game(int width, int height, int frameRate , string name)
 	this->setWidth(width);
 	this->setName(name);
 
+	
 	logger(1, "intialize game");
 	this->initVariables();
 	this->initWindow();
@@ -128,6 +129,7 @@ void Game::render()
 	
 	this->window->clear();
 
+
 	this->player.render(this->window);
 	this->ball.render(this->window);
 
@@ -141,5 +143,15 @@ void Game::update()
 
 	this->player.update(this->window);
 	this->ball.update();
+	this->updateCollision();
 
+}
+
+void Game::updateCollision()
+{
+	if (this->player.getShape().getGlobalBounds().intersects(this->ball.getShape().getGlobalBounds()))
+	{
+		logger(1, "collision occured!");
+		this->ball.~Ball();
+	}
 }

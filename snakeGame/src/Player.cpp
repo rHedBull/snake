@@ -120,6 +120,11 @@ void Player::render(sf::RenderTarget * targetWindow)
 	targetWindow->draw(this->shape);
 }
 
+const sf::RectangleShape & Player::getShape() const
+{
+	return this->shape;
+}
+
 //accesors
 void Player::setMovementDirection(int d)
 {

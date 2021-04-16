@@ -23,7 +23,8 @@ private:
 	//private functions
 	void initVariables();
 	void initShape();
-	void moving();
+	void moving(); // test
+
 
 public:
 
@@ -41,6 +42,8 @@ public:
 	float getMovementSpeed();
 
 	//public functions
+	const sf::RectangleShape& getShape() const;
+
 	void update(sf::RenderTarget* targetWindow);
 	void updateInput();
 	void updateWindowBoundsCollision(const sf::RenderTarget* target);
