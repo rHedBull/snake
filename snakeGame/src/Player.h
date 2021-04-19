@@ -23,6 +23,8 @@ private:
 	 4 = upwards
 	*/
 
+	
+
 	//private functions
 	void initVariables();
 	void initShape();
@@ -30,7 +32,7 @@ private:
 	void updateCollectedBalls();
 
 	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
-
+	
 public:
 
 	//constructor
@@ -57,6 +59,6 @@ public:
 	float getMovementSpeed();
 
 	void addBall(Ball b);
-	int getPlayerBallsLength();
+	int getCollectedBallsLength();
 };
 

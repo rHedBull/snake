@@ -162,7 +162,7 @@ void Player::addBall(Ball b)
 	this->collectedBalls.push_back(b); // pushes Ball into player's collection of balls vector
 	logger(1, "added ball to vector collectedBalls");
 }
-int Player::getPlayerBallsLength()
+int Player::getCollectedBallsLength()
 {
-	return sizeof(this->collectedBalls);
+	return collectedBalls.size();
 }
