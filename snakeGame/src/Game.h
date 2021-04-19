@@ -7,6 +7,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
+#include <vector>
 
 #include "Player.h"
 #include "Util.h"
@@ -27,18 +28,20 @@ private:
 	int frameRate;
 	string name;
 
+
+
+
 	// Game objects
 	Player player;  // player object is created as part of game init
-	Ball ball;
-
-	//sf::RectangleShape enemy;
+	std::vector <Ball> newBall; // always just one element, the newest spanned ball
 	
 
 	//private functions
 	void initVariables();
 	void initWindow();
-
-	void init_enemies();
+	void ballSpawn();
+	void reassignBall();
+	
 
 public:
 	//constructor
@@ -47,9 +50,17 @@ public:
 	//destructor
 	~Game();
 	
+	
+	// public functions
+	void pollEvents();
+	void update();
+	void render();
+	void updateCollision();
+
+
 	//accessors:
 	const bool running() const;
-	
+
 	void setWidth(int w);
 	int getWidth();
 
@@ -62,10 +73,7 @@ public:
 	void setName(string n);
 	string getName();
 
-	// public functions
-	void pollEvents();
-	void update();
-	void render();
-
+	void addBall(Ball b);
+	void emptyBall();
 };
 
