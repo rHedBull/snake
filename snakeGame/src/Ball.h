@@ -27,7 +27,7 @@ private:
 
 
 	//private functions
-	void initVars();
+	void initVars(float w);
 	void initShape(int x, int y);
 	void moving();
 
@@ -35,6 +35,7 @@ private:
 public:
 	//constructor
 	Ball();
+	Ball(float w, float h);
 
 	//destructor
 	virtual ~Ball();

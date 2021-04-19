@@ -2,11 +2,18 @@
 
 
 //private functions:
-void Game::initVariables() 
+void Game::initVariables(int width, int height, int frameRate, string name)
 {
 	//initialize game variables
 	this->window = nullptr;
+	this->setFrameRate(frameRate);
+	this->setHeight(height);
+	this->setWidth(width);
+	this->setName(name);
 	logger(1, "game variables initialized");
+
+	//define Player
+	this->player = Player(this->getHeight()/2, this->getWidth()/2, this->getWidth()/20, this->getHeight()/20);
 }
 
 void Game::initWindow()
@@ -24,36 +31,51 @@ void Game::initWindow()
 void Game::ballSpawn()
 {
 	//spawn the newest ball
-	Ball ball;
+	Ball ball = Ball(this->getWidth(), this->getHeight());
 	addBall(ball); // pushes the newly created ball into the Game classes vector newBall
 }
 
 void Game::reassignBall() {
 	//moves newest collisioned ball from Game to player
 	//deletes old newest ball
-	this->player.addBall(this->newBall[0]); // moves newest ball to player's ball collection
 
+	int dir = this->player.getMovementDirection();// get movement direction from the player
+
+	//place ball behind the player
+	//get player's position
 	float x_pos = this->player.getShape().getGlobalBounds().left;
 	float y_pos = this->player.getShape().getGlobalBounds().top;
+	float offset = (this->player.getWidth()) * 1.5; // to place ball behind player depends on direction
+	if (dir == 1) // to the right
+	{
+		this->newBall.front().align(x_pos - offset, y_pos);
+	}
+	else if (dir == 2) // downwards
+	{
+		this->newBall.front().align(x_pos, y_pos - offset);
+	}else if (dir == 3) // to the left
+	{
+		this->newBall.front().align(x_pos + offset, y_pos);
+	}
+	else if (dir == 4) // upwards
+	{
+		this->newBall.front().align(x_pos, y_pos + offset);
+	}	
 
-	this->newBall.front().align(x_pos, y_pos);
+	this->player.addBall(this->newBall.front()); // moves newest ball to player's ball collection
+
 	this->emptyBall(); // deletes Ball from Game classes vector newBall
+	logger(1, "old \"newBall\" \'ball\' has been deleted");
 }
 
 
 //constructor:
 Game::Game(int width, int height, int frameRate, string name)
 {
-	this->setFrameRate(frameRate);
-	this->setHeight(height);
-	this->setWidth(width);
-	this->setName(name);
-
-
 	logger(1, "intialize game");
-	this->initVariables();
+	this->initVariables(width, height, frameRate, name);
 	this->initWindow();
-	this->ballSpawn();
+	this->ballSpawn(); //create first ball
 	logger(1, "game initialized");
 }
 

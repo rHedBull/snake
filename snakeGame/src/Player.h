@@ -16,6 +16,11 @@ private:
 	sf::RectangleShape shape;
 	float movementSpeed;
 	int movementDirection;
+	float width;
+	float height;
+	float initX;
+	float initY;
+
 	/*
 	 1= to the right -->
 	 2 = downwards 
@@ -26,7 +31,7 @@ private:
 	
 
 	//private functions
-	void initVariables();
+	void initVariables(float iX, float iY, float w, float h);
 	void initShape();
 	void moving(); 
 	void updateCollectedBalls();
@@ -37,6 +42,7 @@ public:
 
 	//constructor
 	Player();
+	Player(float iX, float iY, float w, float h);
 
 	//destructor
 	~Player();
@@ -58,7 +64,21 @@ public:
 	void setMovementSpeed(float s);
 	float getMovementSpeed();
 
+	void setWidth(float w);
+	float getWidth();
+
+	void setHeight(float h);
+	float getHeight();
+
+	void setInitX(float iX);
+	float getInitX();
+
+	void setInitY(float iY);
+	float getInitY();
+
 	void addBall(Ball b);
 	int getCollectedBallsLength();
+
+
 };
 

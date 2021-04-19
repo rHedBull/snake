@@ -5,20 +5,25 @@
 //private functions
 void Player::initShape()
 {
-	float x_pos = 100.f;
-	float y_pos = 100.f;
-
+	// create the rectangle
 	this->shape.setFillColor(sf::Color::Green);
-	this->shape.setSize(sf::Vector2f(100.f, 100.f));
-	this->shape.setPosition(x_pos, y_pos);
-	logger(1, "player shape initialized at x:" + std::to_string(x_pos) + ", y:" + std::to_string(y_pos));
+	this->shape.setSize(sf::Vector2f(this->getWidth(), this->getHeight()));
+	this->shape.setPosition(this->getInitX(), this->getInitY());
+	logger(1, "player shape initialized at x:" + std::to_string(this->initX) + ", y:" + std::to_string(this->initY));
 
 }
 
-void Player::initVariables()
+void Player::initVariables(float iX, float iY, float w, float h)
 {
+	this->setInitX(iX);
+	this->setInitY(iY);
+	this->setWidth(w);
+	this->setHeight(h);
 	this->setMovementSpeed(1.f);
-	this->setMovementDirection(1);
+
+	// set random start direction
+	int r = (rand() % 4) + 1;
+	this->setMovementDirection(r);
 }
 
 void Player::moving()
@@ -44,10 +49,12 @@ void Player::moving()
 //constructor
 Player::Player()
 {
-	//this->shape.setPosition(pos_x, pos_y);
 
+}
+Player::Player(float iX, float iY, float w, float h)
+{
+	this->initVariables( iX,  iY,  w,  h);
 	this->initShape();
-	this->initVariables();
 }
 
 //destructor
@@ -172,16 +179,53 @@ float Player::getMovementSpeed()
 	return this->movementSpeed;
 }
 
+void Player::setWidth(float w)
+{
+	this->width = w;
+}
+float Player::getWidth()
+{
+	return this->width;
+}
+
+void Player::setHeight(float h)
+{
+	this->height = h;
+}
+float Player::getHeight()
+{
+	return this->height;
+}
+
+void Player::setInitX(float iX)
+{
+	this->initX = iX;
+}
+float Player::getInitX()
+{
+	return this->initX;
+}
+
+void Player::setInitY(float iY)
+{
+	this->initY = iY;
+}
+float Player::getInitY()
+{
+	return this->initY;
+}
+
 void Player::addBall(Ball b)
 {
 	this->collectedBalls.push_back(b); // pushes Ball into player's collection of balls vector
+	logger(1, "added ball to vector collectedBalls.");
+
 	//give the newly added ball direction and speed of player to follow him
 	this->collectedBalls.back().setMovementDirection(this->getMovementDirection());
 	this->collectedBalls.back().setMovementSpeed(this->getMovementSpeed());
-	logger(1, "added ball to vector collectedBalls");
-
 }
 int Player::getCollectedBallsLength()
 {
 	return collectedBalls.size();
 }
+
