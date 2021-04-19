@@ -29,6 +29,8 @@ private:
 	string name;
 
 
+
+
 	// Game objects
 	Player player;  // player object is created as part of game init
 	std::vector <Ball> newBall; // always just one element, the newest spanned ball
@@ -38,6 +40,7 @@ private:
 	void initVariables();
 	void initWindow();
 	void ballSpawn();
+	void reassignBall();
 	
 
 public:
@@ -71,6 +74,6 @@ public:
 	string getName();
 
 	void addBall(Ball b);
-	void deleteBall();
+	void emptyBall();
 };
 

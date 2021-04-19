@@ -47,13 +47,19 @@ Ball::~Ball()
 //public functions
 void Ball::update()
 {
-
+	
 }
 
 void Ball::render(sf::RenderTarget* targetWindow)
 {
 	//render ball to game window
 	targetWindow->draw(this->shape);
+}
+
+void Ball::align(float x, float y)
+{
+	this->shape.setPosition(x, y); //repositions ball
+	logger(1, "Ball has been repositioned at x:" + to_string(x) + ", y:" + to_string(y));
 }
 
 

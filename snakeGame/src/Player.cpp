@@ -130,6 +130,15 @@ void Player::render(sf::RenderTarget * targetWindow)
 {
 	//render player shape to game window
 	targetWindow->draw(this->shape);
+
+	//rendering of the collected balls
+	int i = 0;
+	while (i < this->getCollectedBallsLength())
+	{
+		this->collectedBalls[i].render(targetWindow);
+
+		i++;
+	}
 }
 
 const sf::RectangleShape & Player::getShape() const

@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "Util.h"
 
 
 //private functions:
@@ -27,6 +26,18 @@ void Game::ballSpawn()
 	//spawn the newest ball
 	Ball ball;
 	addBall(ball); // pushes the newly created ball into the Game classes vector newBall
+}
+
+void Game::reassignBall() {
+	//moves newest collisioned ball from Game to player
+	//deletes old newest ball
+	this->player.addBall(this->newBall[0]); // moves newest ball to player's ball collection
+
+	float x_pos = this->player.getShape().getGlobalBounds().left;
+	float y_pos = this->player.getShape().getGlobalBounds().top;
+
+	this->newBall.front().align(x_pos, y_pos);
+	this->emptyBall(); // deletes Ball from Game classes vector newBall
 }
 
 
@@ -85,8 +96,10 @@ void Game::render()
 	this->window->clear(); //clear
 
 	//render objects
-	this->player.render(this->window);
+	this->player.render(this->window);     // also calls rendering for the collected balls!
 	this->newBall[0].render(this->window);
+	
+	
 	
 	//draw game:
 	this->window -> display();
@@ -99,7 +112,7 @@ void Game::update()
 
 	//update different objects
 	this->player.update(this->window); //only one instance of player
-	this->newBall[0].update();
+	//this->newBall[0].update();
 	
 	//update interactions between multiple objects
 	this->updateCollision();
@@ -111,9 +124,7 @@ void Game::updateCollision()
 		if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
 		{
 			logger(1, "collision occured!");
-			this->player.addBall(this->newBall[0]); // moves newest ball to player's ball collection
-			this->deleteBall(); // deletes Ball from Game classes vector newBall
-			//this->newBall.~Ball();
+			this->reassignBall(); //configere new ball handling
 			this->ballSpawn(); // creates new ball
 		}
 }
@@ -167,8 +178,9 @@ void Game::addBall(Ball b)
 	//add ball to vector newBall of the Game class
 	this->newBall.push_back(b); // vector newBall always has only one element so at index = 0
 }
-void Game::deleteBall()
+void Game::emptyBall()
 {
 	//delete ball from the vector newBall from this instance's Game class
 	this->newBall.pop_back();
+
 }
