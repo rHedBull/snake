@@ -27,6 +27,24 @@ void Ball::initShape(int x, int y)
 	
 }
 
+void Ball::moving()
+{
+	// moves the player every time the function is called in the movementDirection
+	// 	   so that he moves continuously
+
+	//left
+	if (this->getMovementDirection() == 3)
+		this->shape.move(-this->getMovementSpeed(), 0.f);
+	//right
+	else if (this->getMovementDirection() == 1)
+		this->shape.move(this->getMovementSpeed(), 0.f);
+	//down
+	else if (this->getMovementDirection() == 2)
+		this->shape.move(0.f, this->getMovementSpeed());
+	//up
+	else if (this->getMovementDirection() == 4)
+		this->shape.move(0.f, -this->getMovementSpeed());
+}
 
 //constructor
 Ball::Ball()
@@ -47,7 +65,8 @@ Ball::~Ball()
 //public functions
 void Ball::update()
 {
-	
+	if (this->getMovementDirection() > 0)
+		this->moving();
 }
 
 void Ball::render(sf::RenderTarget* targetWindow)

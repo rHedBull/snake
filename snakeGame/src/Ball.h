@@ -29,6 +29,7 @@ private:
 	//private functions
 	void initVars();
 	void initShape(int x, int y);
+	void moving();
 
 
 public:

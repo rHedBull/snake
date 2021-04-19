@@ -71,7 +71,13 @@ void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWi
 	this->updateWindowBoundsCollision(targetWindow);
 
 	//update the players collected balls
-	//updateCollectedBalls();
+	int i = 0;
+	while (i < this->getCollectedBallsLength())
+	{
+		this->collectedBalls[i].update();
+
+		i++;
+	}
 
 }
 
@@ -169,7 +175,11 @@ float Player::getMovementSpeed()
 void Player::addBall(Ball b)
 {
 	this->collectedBalls.push_back(b); // pushes Ball into player's collection of balls vector
+	//give the newly added ball direction and speed of player to follow him
+	this->collectedBalls.back().setMovementDirection(this->getMovementDirection());
+	this->collectedBalls.back().setMovementSpeed(this->getMovementSpeed());
 	logger(1, "added ball to vector collectedBalls");
+
 }
 int Player::getCollectedBallsLength()
 {

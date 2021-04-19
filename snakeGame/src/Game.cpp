@@ -110,9 +110,7 @@ void Game::update()
 	// poll for newest events(keypress, ...)
 	this->pollEvents();
 
-	//update different objects
-	this->player.update(this->window); //only one instance of player
-	//this->newBall[0].update();
+	this->player.update(this->window); //only one instance of player, also calls updating the collected balls
 	
 	//update interactions between multiple objects
 	this->updateCollision();

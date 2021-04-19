@@ -7,6 +7,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <SFML/Window.hpp>
+#include <vector>
 
 #include "Game.h"
 #include "Util.h"
@@ -15,7 +16,7 @@
 
 
 void test() {
-   
+    
 }
 
 void gameLoop() {
@@ -28,7 +29,6 @@ void gameLoop() {
     while (game.running())
     {
         
-
         //update
         game.update();
 
