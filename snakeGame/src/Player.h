@@ -1,13 +1,13 @@
-#pragma once
+#ifndef Player_H
+#define Player_H
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
-#include <SFML/Window.hpp>
 #include <vector>
+#include <iostream>
 
+#include "TurnPoint.h"
 #include "Ball.h"
+
 
 class Player
 {
@@ -37,7 +37,9 @@ private:
 	void updateCollectedBalls();
 
 	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
-	
+	std::vector <TurnPoint> turnPoints;
+
+
 public:
 
 	//constructor
@@ -79,6 +81,10 @@ public:
 	void addBall(Ball b);
 	int getCollectedBallsLength();
 
+	void addTurnPoint(TurnPoint tP);
+	int getTurnPointsLength();
+
 
 };
 
+#endif

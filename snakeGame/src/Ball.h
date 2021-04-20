@@ -1,10 +1,7 @@
-#pragma once
+#ifndef Ball_H
+#define Ball_H
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
-#include <SFML/Window.hpp>
 
 class Ball
 {
@@ -24,6 +21,7 @@ private:
 	 3 = to the left <--
 	 4 = upwards
 	*/
+	
 
 
 	//private functions
@@ -72,3 +70,4 @@ public:
 	const sf::CircleShape getShape() const;
 };
 
+#endif

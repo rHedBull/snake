@@ -1,8 +1,8 @@
 #include "Game.h"
-
+#include "Util.h"
 
 //private functions:
-void Game::initVariables(int width, int height, int frameRate, string name)
+void Game::initVariables(int width, int height, int frameRate, std::string name)
 {
 	//initialize game variables
 	this->window = nullptr;
@@ -62,6 +62,7 @@ void Game::reassignBall() {
 		this->newBall.front().align(x_pos, y_pos + offset);
 	}	
 
+	
 	this->player.addBall(this->newBall.front()); // moves newest ball to player's ball collection
 
 	this->emptyBall(); // deletes Ball from Game classes vector newBall
@@ -70,7 +71,7 @@ void Game::reassignBall() {
 
 
 //constructor:
-Game::Game(int width, int height, int frameRate, string name)
+Game::Game(int width, int height, int frameRate, std::string name)
 {
 	logger(1, "intialize game");
 	this->initVariables(width, height, frameRate, name);
@@ -184,11 +185,11 @@ int Game::getFrameRate()
 	return this->frameRate;
 }
 
-void Game::setName(string n)
+void Game::setName(std::string n)
 {
 	this->name = n;
 }
-string Game::getName()
+std::string Game::getName()
 {
 	return this->name;
 }

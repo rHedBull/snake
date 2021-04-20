@@ -1,7 +1,5 @@
 #include "Ball.h"
 #include "Util.h"
-#include "Game.h"
-
 
 //private functions
 void Ball::initVars(float w) {

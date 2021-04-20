@@ -11,8 +11,10 @@
 
 #include "Game.h"
 #include "Util.h"
+/*
 #include "Player.h"
 #include "Ball.h"
+#include "TurnPoint.h"*/
 
 
 void test() {

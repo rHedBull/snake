@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Util.h"
-#include "Game.h"
+#include "TurnPoint.h"
 
 //private functions
 void Player::initShape()
@@ -60,7 +60,6 @@ Player::Player(float iX, float iY, float w, float h)
 //destructor
 Player::~Player()
 {
-	logger(1, "player destroyed");
 }
 
 
@@ -99,22 +98,43 @@ void Player::updateInput() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->setMovementDirection(3); // to the left
-		
+		//define new turnpoint
+		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+		tp.setNewDirection(3);
+		// push created tp into turnPoints vector
+		this->addTurnPoint(tp);
 
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D ) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		this->setMovementDirection(1); // to the right
+		//define new turnpoint
+		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+		tp.setNewDirection(1);
+		// push created tp into turnPoints vector
+		this->addTurnPoint(tp);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->setMovementDirection(4); // upward
+		//define new turnpoint
+		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+		tp.setNewDirection(4);
+		// push created tp into turnPoints vector
+		this->addTurnPoint(tp);
 
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		this->setMovementDirection(2); // downwards
+		//define new turnpoint
+		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+		tp.setNewDirection(2);
+		// push created tp into turnPoints vector
+		this->addTurnPoint(tp);
 	}
+
+	
 
 }
 
@@ -149,6 +169,15 @@ void Player::render(sf::RenderTarget * targetWindow)
 	while (i < this->getCollectedBallsLength())
 	{
 		this->collectedBalls[i].render(targetWindow);
+
+		i++;
+	}
+
+	//render turnpoints
+	i = 0;
+	while (i < this->getTurnPointsLength())
+	{
+		this->turnPoints[i].render(targetWindow);
 
 		i++;
 	}
@@ -228,4 +257,17 @@ int Player::getCollectedBallsLength()
 {
 	return collectedBalls.size();
 }
+
+void Player::addTurnPoint(TurnPoint tP)
+{
+	this->turnPoints.push_back(tP);
+}
+int Player::getTurnPointsLength()
+{
+	return turnPoints.size();
+}
+/*TurnPoint Player::getTurnPoints()
+{
+	return this->turnPoints;
+}*/
 
