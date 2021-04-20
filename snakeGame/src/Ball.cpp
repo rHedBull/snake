@@ -4,9 +4,9 @@
 
 
 //private functions
-void Ball::initVars() {
+void Ball::initVars(float w) {
 	//initialize variables
-	this->setRadius(50);
+	this->setRadius(w/30); // set radius relative to width of window
 }
 
 void Ball::initShape(int x, int y)
@@ -49,16 +49,17 @@ void Ball::moving()
 //constructor
 Ball::Ball()
 {
-	this->initVars();
-	this->initShape(600, 600); // here enter dimensions of game window
 
+}
+Ball::Ball(float w, float h)
+{
+	this->initVars(w);
+	this->initShape(w, h); // here enter dimensions of game window
 }
 
 //destructor
 Ball::~Ball()
 {
-
-	logger(1, "Ball has been deleted");
 }
 
 
