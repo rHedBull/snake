@@ -2,8 +2,9 @@
 #include "Util.h"
 
 //private functions
-void Ball::initVars(float w) {
+void Ball::initVars(float w, int numb) {
 	//initialize variables
+	this->setBallNumb(numb);
 	this->setRadius(w/30); // set radius relative to width of window
 }
 
@@ -49,9 +50,9 @@ Ball::Ball()
 {
 
 }
-Ball::Ball(float w, float h)
+Ball::Ball(float w, float h, int numb)
 {
-	this->initVars(w);
+	this->initVars(w, numb);
 	this->initShape(w, h); // here enter dimensions of game window
 }
 
@@ -65,7 +66,11 @@ Ball::~Ball()
 void Ball::update()
 {
 	if (this->getMovementDirection() > 0)
+	{
 		this->moving();
+	}
+
+
 }
 
 void Ball::render(sf::RenderTarget* targetWindow)
@@ -82,6 +87,16 @@ void Ball::align(float x, float y)
 
 
 //accesors
+
+int Ball::getBallNumb() const
+{
+	return this->ballNumb;
+}
+void Ball::setBallNumb(int n)
+{
+	this->ballNumb = n;
+}
+
 void Ball::setRadius(int r)
 {
 	this->radius = r;
@@ -89,6 +104,24 @@ void Ball::setRadius(int r)
 int Ball::getRadius()
 {
 	return this->radius;
+}
+
+void Ball::setMovementSpeed(float v)
+{
+	this->movementSpeed = v;
+}
+float Ball::getMovementSpeed()
+{
+	return this->movementSpeed;
+}
+
+void Ball::setMovementDirection(int r)
+{
+	this->movementDirection = r;
+}
+int Ball::getMovementDirection()
+{
+	return this->movementDirection;
 }
 
 const sf::CircleShape Ball::getShape() const

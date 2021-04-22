@@ -45,6 +45,38 @@ void Player::moving()
 		this->shape.move(0.f , -this->getMovementSpeed());
 }
 
+void Player::updateTurnPointCollision()
+{
+
+	//check for collisions between all collected balls and all existing turnpoints!
+	int i = 0;
+	int x = 0;
+	while(i < this->getCollectedBallsLength())
+	{
+		x = 0;
+		while (x < this->getTurnPointsLength())
+		{
+			if (this->collectedBalls[i].getShape().getGlobalBounds().intersects(this->turnPoints[x].getShape().getGlobalBounds()))
+			{
+				//assign new movement direction saved in turn point to collided ball
+				this->collectedBalls[i].setMovementDirection(this->turnPoints[x].getNewDirection());
+
+				// if this is the last collected ball the turn point can disappear
+				if (this->collectedBalls[i].getBallNumb() == this->collectedBalls.back().getBallNumb());
+				{
+					this->turnPoints.pop_back();
+
+					logger(1, "turn point deleted");
+				}
+				logger(1, "ball collided with turn point");
+			}
+			x++;
+		}
+		i++;
+	}
+	
+}
+
 
 //constructor
 Player::Player()
@@ -77,6 +109,15 @@ void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWi
 	this->updateWindowBoundsCollision(targetWindow);
 
 	//update the players collected balls
+	this->updateCollectedBalls();
+
+	//if collected ball collides with turn point
+	this->updateTurnPointCollision();
+
+}
+
+void Player::updateCollectedBalls()
+{
 	int i = 0;
 	while (i < this->getCollectedBallsLength())
 	{
@@ -84,12 +125,6 @@ void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWi
 
 		i++;
 	}
-
-}
-
-void Player::updateCollectedBalls()
-{
-
 }
 
 void Player::updateInput() {
@@ -98,40 +133,64 @@ void Player::updateInput() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->setMovementDirection(3); // to the left
-		//define new turnpoint
-		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
-		tp.setNewDirection(3);
-		// push created tp into turnPoints vector
-		this->addTurnPoint(tp);
+		
+		//only if there are already collected balls
+		if(this->getCollectedBallsLength() > 0)
+		{
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			tp.setNewDirection(3);
+			// push created tp into turnPoints vector
+
+			this->addTurnPoint(tp);
+		}
 
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D ) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		this->setMovementDirection(1); // to the right
-		//define new turnpoint
-		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
-		tp.setNewDirection(1);
-		// push created tp into turnPoints vector
-		this->addTurnPoint(tp);
+
+		//only if there are already collected balls
+		if (this->getCollectedBallsLength() > 0)
+		{
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			tp.setNewDirection(1);
+			// push created tp into turnPoints vector
+
+			this->addTurnPoint(tp);
+		}
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->setMovementDirection(4); // upward
-		//define new turnpoint
-		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
-		tp.setNewDirection(4);
-		// push created tp into turnPoints vector
-		this->addTurnPoint(tp);
+
+		//only if there are already collected balls
+		if (this->getCollectedBallsLength() > 0)
+		{
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			tp.setNewDirection(4);
+			// push created tp into turnPoints vector
+
+			this->addTurnPoint(tp);
+		}
 
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		this->setMovementDirection(2); // downwards
-		//define new turnpoint
-		TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
-		tp.setNewDirection(2);
-		// push created tp into turnPoints vector
-		this->addTurnPoint(tp);
+
+		//only if there are already collected balls
+		if (this->getCollectedBallsLength() > 0)
+		{
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			tp.setNewDirection(2);
+			// push created tp into turnPoints vector
+
+			this->addTurnPoint(tp);
+		}
 	}
 
 	
@@ -266,8 +325,4 @@ int Player::getTurnPointsLength()
 {
 	return turnPoints.size();
 }
-/*TurnPoint Player::getTurnPoints()
-{
-	return this->turnPoints;
-}*/
 

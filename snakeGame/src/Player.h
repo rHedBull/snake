@@ -27,7 +27,6 @@ private:
 	 3 = to the left <--
 	 4 = upwards
 	*/
-
 	
 
 	//private functions
@@ -35,6 +34,7 @@ private:
 	void initShape();
 	void moving(); 
 	void updateCollectedBalls();
+	void updateTurnPointCollision();
 
 	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
 	std::vector <TurnPoint> turnPoints;

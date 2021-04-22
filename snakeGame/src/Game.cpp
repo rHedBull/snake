@@ -31,7 +31,8 @@ void Game::initWindow()
 void Game::ballSpawn()
 {
 	//spawn the newest ball
-	Ball ball = Ball(this->getWidth(), this->getHeight());
+	Ball ball = Ball(this->getWidth(), this->getHeight(), this->getBallCount());
+	this->setBallCount(this->getBallCount() + 1);
 	addBall(ball); // pushes the newly created ball into the Game classes vector newBall
 }
 
@@ -156,6 +157,15 @@ const bool Game::running() const
 {
 	// test if the game window still is opened
 	return this->window->isOpen();
+}
+
+void Game::setBallCount(int c)
+{
+	this->ballCount = c;
+}
+int Game::getBallCount() const
+{
+	return this->ballCount;
 }
 
 void Game::setWidth(int w)

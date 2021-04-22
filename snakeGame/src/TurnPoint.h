@@ -53,6 +53,8 @@ public:
 
 	int getNewDirection();
 	void setNewDirection(int dir);
+
+	const sf::CircleShape getShape() const;
 };
 
 #endif

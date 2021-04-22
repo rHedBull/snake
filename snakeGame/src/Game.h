@@ -32,7 +32,7 @@ private:
 	// player object is created as part of game init
 	Player player;  
 	std::vector <Ball> newBall; // always just one element, the newest spanned ball
-	
+	int ballCount = 1;
 
 	//private functions
 	void initVariables(int width, int height, int frameRate, std::string name);
@@ -58,6 +58,9 @@ public:
 
 	//accessors:
 	const bool running() const;
+
+	void setBallCount(int c);
+	int getBallCount() const;
 
 	void setWidth(int w);
 	int getWidth();

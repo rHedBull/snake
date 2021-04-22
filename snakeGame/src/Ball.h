@@ -11,6 +11,7 @@ private:
 	//shape
 	sf::CircleShape shape;
 	int radius;
+	int ballNumb;
 
 	//movement
 	float movementSpeed;
@@ -25,7 +26,7 @@ private:
 
 
 	//private functions
-	void initVars(float w);
+	void initVars(float w, int numb);
 	void initShape(int x, int y);
 	void moving();
 
@@ -33,7 +34,7 @@ private:
 public:
 	//constructor
 	Ball();
-	Ball(float w, float h);
+	Ball(float w, float h, int numb);
 
 	//destructor
 	virtual ~Ball();
@@ -46,26 +47,17 @@ public:
 
 
 	//accesors
+	int getBallNumb() const;
+	void setBallNumb(int n);
+
 	void setRadius(int r);
 	int getRadius();
 	
-	void setMovementSpeed(int v)
-	{
-		this->movementSpeed = v;
-	}
-	int getMovementSpeed()
-	{
-		return this->movementSpeed;
-	}
+	void setMovementSpeed(float v);
+	float getMovementSpeed();
 
-	void setMovementDirection(int r)
-	{
-		this->movementDirection = r;
-	}
-	int getMovementDirection()
-	{
-		return this->movementDirection;
-	}
+	void setMovementDirection(int r);
+	int getMovementDirection();
 
 	const sf::CircleShape getShape() const;
 };

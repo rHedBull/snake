@@ -84,3 +84,9 @@ void TurnPoint::setNewDirection(int dir)
 {
 	this->newDirection = dir;
 }
+
+const sf::CircleShape TurnPoint::getShape() const
+{
+	// returns the shape of this ball
+	return this->circ;
+}
