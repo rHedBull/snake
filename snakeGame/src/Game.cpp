@@ -44,9 +44,9 @@ void Game::reassignBall() {
 
 	//place ball behind the player
 	//get player's position
-	float x_pos = this->player.getShape().getGlobalBounds().left;
-	float y_pos = this->player.getShape().getGlobalBounds().top;
-	float offset = (this->player.getWidth()) * 1.5; // to place ball behind player depends on direction
+	float x_pos = this->player.getXPosition();
+	float y_pos = this->player.getYPosition();
+	float offset = ((this->player.getWidth()) * 1.5) * ((float) this->player.getCollectedBallsLength() + 1.0); // to place ball behind player depends on direction
 	if (dir == 1) // to the right
 	{
 		this->newBall.front().align(x_pos - offset, y_pos);

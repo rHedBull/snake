@@ -78,6 +78,9 @@ public:
 	void setInitY(float iY);
 	float getInitY();
 
+	float getXPosition();
+	float getYPosition();
+
 	void addBall(Ball b);
 	int getCollectedBallsLength();
 

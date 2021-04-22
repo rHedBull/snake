@@ -58,17 +58,46 @@ void Player::updateTurnPointCollision()
 		{
 			if (this->collectedBalls[i].getShape().getGlobalBounds().intersects(this->turnPoints[x].getShape().getGlobalBounds()))
 			{
+				logger(1, "ball:" + to_string(collectedBalls[i].getBallNumb()) + " collided with turn point");
+
+				// place ball centered behind player
+				//get player's position
+				float x_pos = this->getShape().getGlobalBounds().left;
+				float y_pos = this->getShape().getGlobalBounds().top;
+				float offset = ((this->getWidth()) * 1.5) * ((float)i + 1.0);
+
+				int dir = this->turnPoints[x].getNewDirection();
+
+				if (dir == 1) // to the right
+				{
+					this->collectedBalls[i].align(x_pos - offset, y_pos);
+				}
+				else if (dir == 2) // downwards
+				{
+					this->collectedBalls[i].align(x_pos, y_pos - offset);
+				}
+				else if (dir == 3) // to the left
+				{
+					this->collectedBalls[i].align(x_pos + offset, y_pos);
+				}
+				else if (dir == 4) // upwards
+				{
+					this->collectedBalls[i].align(x_pos, y_pos + offset);
+				}
+				logger(1, "ball:" + to_string(collectedBalls[i].getBallNumb()) + " is realigned");
+
 				//assign new movement direction saved in turn point to collided ball
-				this->collectedBalls[i].setMovementDirection(this->turnPoints[x].getNewDirection());
+				this->collectedBalls[i].setMovementDirection(dir);
+				logger(1, "ball:" + to_string(collectedBalls[i].getBallNumb()) + " changed movemenDirection to:" + to_string(dir));
 
 				// if this is the last collected ball the turn point can disappear
-				if (this->collectedBalls[i].getBallNumb() == this->collectedBalls.back().getBallNumb());
+				if (this->collectedBalls[i].getBallNumb() == this->collectedBalls.back().getBallNumb())
 				{
 					this->turnPoints.pop_back();
 
 					logger(1, "turn point deleted");
 				}
-				logger(1, "ball collided with turn point");
+				
 			}
 			x++;
 		}
@@ -130,6 +159,7 @@ void Player::updateCollectedBalls()
 void Player::updateInput() {
 	//keypoard input collects the change of directions by ASWD and arrow keys
 
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->setMovementDirection(3); // to the left
@@ -138,7 +168,7 @@ void Player::updateInput() {
 		if(this->getCollectedBallsLength() > 0)
 		{
 			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
 			tp.setNewDirection(3);
 			// push created tp into turnPoints vector
 
@@ -153,7 +183,7 @@ void Player::updateInput() {
 		if (this->getCollectedBallsLength() > 0)
 		{
 			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
 			tp.setNewDirection(1);
 			// push created tp into turnPoints vector
 
@@ -169,7 +199,7 @@ void Player::updateInput() {
 		if (this->getCollectedBallsLength() > 0)
 		{
 			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
 			tp.setNewDirection(4);
 			// push created tp into turnPoints vector
 
@@ -185,7 +215,7 @@ void Player::updateInput() {
 		if (this->getCollectedBallsLength() > 0)
 		{
 			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->shape.getGlobalBounds().left, this->shape.getGlobalBounds().top);
+			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
 			tp.setNewDirection(2);
 			// push created tp into turnPoints vector
 
@@ -201,20 +231,18 @@ void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
 	//checks continuously for collision with game Window borders
 	//Up
-	if (shape.getGlobalBounds().top <= 0.f)
+	if (this->getYPosition() <= 0.f)
 		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
 	//Down
-	if (shape.getGlobalBounds().top + shape.getGlobalBounds().height >= target->getSize().y)
+	if (this->getYPosition() + shape.getGlobalBounds().height >= target->getSize().y)
 		this->shape.setPosition(shape.getGlobalBounds().left, target->getSize().y - shape.getGlobalBounds().height);
 
 	//Left
-	if (shape.getGlobalBounds().left <= 0.f)
+	if (this->getXPosition() <= 0.f)
 		this->shape.setPosition(0.f, shape.getGlobalBounds().top);
 		//Right
-	if (shape.getGlobalBounds().left + shape.getGlobalBounds().width >= target->getSize().x)
+	if (this->getXPosition() + shape.getGlobalBounds().width >= target->getSize().x)
 		this->shape.setPosition(target->getSize().x - shape.getGlobalBounds().width, shape.getGlobalBounds().top);
-	
-
 	
 }
 
@@ -301,6 +329,15 @@ void Player::setInitY(float iY)
 float Player::getInitY()
 {
 	return this->initY;
+}
+
+float Player::getXPosition()
+{
+	return  this->getShape().getGlobalBounds().left;
+}
+float Player::getYPosition()
+{
+	return this->getShape().getGlobalBounds().top;
 }
 
 void Player::addBall(Ball b)
