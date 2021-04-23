@@ -15,12 +15,11 @@ private:
 	//private variables
 	sf::RectangleShape shape;
 	float movementSpeed;
-	int movementDirection;
 	float width;
 	float height;
 	float initX;
 	float initY;
-
+	int movementDirection;
 	/*
 	 1= to the right -->
 	 2 = downwards 
@@ -28,6 +27,9 @@ private:
 	 4 = upwards
 	*/
 	
+	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
+	std::vector <TurnPoint> turnPoints;
+
 
 	//private functions
 	void initVariables(float iX, float iY, float w, float h);
@@ -35,13 +37,12 @@ private:
 	void moving(); 
 	void updateCollectedBalls();
 	void updateTurnPointCollision();
+	void updateInput();
+	void updateWindowBoundsCollision(const sf::RenderTarget* target);
+	bool checkTPDist(int movementDirection);
 
-	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
-	std::vector <TurnPoint> turnPoints;
-
-
+	
 public:
-
 	//constructor
 	Player();
 	Player(float iX, float iY, float w, float h);
@@ -51,11 +52,7 @@ public:
 
 
 	//public functions
-	const sf::RectangleShape& getShape() const;
-
 	void update(sf::RenderTarget* targetWindow);
-	void updateInput();
-	void updateWindowBoundsCollision(const sf::RenderTarget* target);
 	void render(sf::RenderTarget* targetWindow);
 
 
@@ -86,6 +83,8 @@ public:
 
 	void addTurnPoint(TurnPoint tP);
 	int getTurnPointsLength();
+
+	const sf::RectangleShape& getShape() const;
 
 
 };

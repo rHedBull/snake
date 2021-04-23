@@ -70,6 +70,17 @@ void Game::reassignBall() {
 	logger(1, "old \"newBall\" \'ball\' has been deleted");
 }
 
+void Game::updateCollision()
+{
+	// updates collision between player and newest ball
+	if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
+	{
+		logger(1, "collision occured!");
+		this->reassignBall(); //configere new ball handling
+		this->ballSpawn(); // creates new ball
+	}
+}
+
 
 //constructor:
 Game::Game(int width, int height, int frameRate, std::string name)
@@ -140,16 +151,7 @@ void Game::update()
 	this->updateCollision();
 }
 
-void Game::updateCollision()
-{
-	// updates collision between player and newest ball
-		if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
-		{
-			logger(1, "collision occured!");
-			this->reassignBall(); //configere new ball handling
-			this->ballSpawn(); // creates new ball
-		}
-}
+
 
 
 //accessors:

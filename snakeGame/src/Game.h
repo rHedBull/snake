@@ -39,6 +39,7 @@ private:
 	void initWindow();
 	void ballSpawn();
 	void reassignBall();
+	void updateCollision();
 	
 
 public:
@@ -53,7 +54,6 @@ public:
 	void pollEvents();
 	void update();
 	void render();
-	void updateCollision();
 
 
 	//accessors:

@@ -2,6 +2,7 @@
 #include "Util.h"
 #include "TurnPoint.h"
 
+
 //private functions
 void Player::initShape()
 {
@@ -106,6 +107,255 @@ void Player::updateTurnPointCollision()
 	
 }
 
+void Player::updateCollectedBalls()
+{
+	int i = 0;
+	while (i < this->getCollectedBallsLength())
+	{
+		this->collectedBalls[i].update();
+
+		i++;
+	}
+}
+
+void Player::updateInput() {
+	//keypoard input collects the change of directions by ASWD and arrow keys
+
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		// check if there are already any balls collected
+		bool collected = !this->collectedBalls.empty();
+
+		if (collected == false)
+		{
+			this->setMovementDirection(3); // to the left
+		}
+		else
+		{
+			// check if there are already any turn points
+			bool empty = this->turnPoints.empty();
+
+			if (empty == true)
+			{
+				this->setMovementDirection(3); // to the left
+
+				//define new turnpoint
+				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				tp.setNewDirection(3);
+				// push created tp into turnPoints vector
+
+				this->addTurnPoint(tp);
+			}
+			else
+			{
+				// check if turn point is not overlapping
+				bool t = this->checkTPDist(this->getMovementDirection());
+
+				if (t) {
+
+					this->setMovementDirection(3); // to the left
+
+					//define new turnpoint
+					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					tp.setNewDirection(3);
+					// push created tp into turnPoints vector
+
+					this->addTurnPoint(tp);
+				}
+			}
+			
+		}
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		// check if there are already any balls collected
+		bool collected = !this->collectedBalls.empty();
+
+		if (collected == false)
+		{
+			this->setMovementDirection(1); // to the right
+		}
+		else
+		{
+			// check if there are already any turn points
+			bool empty = this->turnPoints.empty();
+
+			if (empty == true)
+			{
+				this->setMovementDirection(1); // to the right
+
+				//define new turnpoint
+				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				tp.setNewDirection(1);
+				// push created tp into turnPoints vector
+
+				this->addTurnPoint(tp);
+			}
+			else
+			{
+				// check if turn point is not overlapping
+				bool t = this->checkTPDist(this->getMovementDirection());
+
+				if (t) {
+
+					this->setMovementDirection(1); // to the right
+
+					//define new turnpoint
+					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					tp.setNewDirection(1);
+					// push created tp into turnPoints vector
+
+					this->addTurnPoint(tp);
+				}
+			}
+
+		}
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		// check if there are already any balls collected
+		bool collected = !this->collectedBalls.empty();
+
+		if (collected == false)
+		{
+			this->setMovementDirection(4); // upwards
+		}
+		else
+		{
+			// check if there are already any turn points
+			bool empty = this->turnPoints.empty();
+
+			if (empty == true)
+			{
+				this->setMovementDirection(4); // upwards
+
+				//define new turnpoint
+				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				tp.setNewDirection(4);
+				// push created tp into turnPoints vector
+
+				this->addTurnPoint(tp);
+			}
+			else
+			{
+				// check if turn point is not overlapping
+				bool t = this->checkTPDist(this->getMovementDirection());
+
+				if (t) {
+
+					this->setMovementDirection(4); // upwards
+
+					//define new turnpoint
+					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					tp.setNewDirection(4);
+					// push created tp into turnPoints vector
+
+					this->addTurnPoint(tp);
+				}
+			}
+
+		}
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		// check if there are already any balls collected
+		bool collected = !this->collectedBalls.empty();
+
+		if (collected == false)
+		{
+			this->setMovementDirection(2); // downwards
+		}
+		else
+		{
+			// check if there are already any turn points
+			bool empty = this->turnPoints.empty();
+
+			if (empty == true)
+			{
+				this->setMovementDirection(2); // downwards
+
+				//define new turnpoint
+				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				tp.setNewDirection(2);
+				// push created tp into turnPoints vector
+
+				this->addTurnPoint(tp);
+			}
+			else
+			{
+				// check if turn point is not overlapping
+				bool t = this->checkTPDist(this->getMovementDirection());
+
+				if (t) {
+
+					this->setMovementDirection(2); // downwards
+
+					//define new turnpoint
+					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					tp.setNewDirection(2);
+					// push created tp into turnPoints vector
+
+					this->addTurnPoint(tp);
+				}
+			}
+
+		}
+	}
+
+
+
+}
+
+void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
+{
+	//checks continuously for collision with game Window borders
+	//Up
+	if (this->getYPosition() <= 0.f)
+		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
+	//Down
+	if (this->getYPosition() + shape.getGlobalBounds().height >= target->getSize().y)
+		this->shape.setPosition(shape.getGlobalBounds().left, target->getSize().y - shape.getGlobalBounds().height);
+
+	//Left
+	if (this->getXPosition() <= 0.f)
+		this->shape.setPosition(0.f, shape.getGlobalBounds().top);
+	//Right
+	if (this->getXPosition() + shape.getGlobalBounds().width >= target->getSize().x)
+		this->shape.setPosition(target->getSize().x - shape.getGlobalBounds().width, shape.getGlobalBounds().top);
+
+}
+
+bool Player::checkTPDist(int mDir)
+{
+		//check for enough distance between 2 turn points
+		float dist; // distance between last turnPoint and wanted new one at current Player's position
+		if (mDir == 1) // to the right
+		{
+			dist = this->getXPosition() - this->turnPoints.back().getXPos();
+		}
+		else if (mDir == 2) //downwards
+		{
+			dist = this->getYPosition() - this->turnPoints.back().getYPos();
+		}
+		else if (mDir == 3) // to the left
+		{
+			dist = this->turnPoints.back().getXPos() - this->getXPosition();
+		}
+		else if (mDir == 4) //upwards
+		{
+			dist = this->turnPoints.back().getYPos() - this->getYPosition();
+		}
+
+		bool space = (dist > this->getWidth() + 5);
+
+		if (space == true)
+		{
+			return true;
+		}
+}
+
 
 //constructor
 Player::Player()
@@ -145,107 +395,6 @@ void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWi
 
 }
 
-void Player::updateCollectedBalls()
-{
-	int i = 0;
-	while (i < this->getCollectedBallsLength())
-	{
-		this->collectedBalls[i].update();
-
-		i++;
-	}
-}
-
-void Player::updateInput() {
-	//keypoard input collects the change of directions by ASWD and arrow keys
-
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		this->setMovementDirection(3); // to the left
-		
-		//only if there are already collected balls
-		if(this->getCollectedBallsLength() > 0)
-		{
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
-			tp.setNewDirection(3);
-			// push created tp into turnPoints vector
-
-			this->addTurnPoint(tp);
-		}
-
-	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D ) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		this->setMovementDirection(1); // to the right
-
-		//only if there are already collected balls
-		if (this->getCollectedBallsLength() > 0)
-		{
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
-			tp.setNewDirection(1);
-			// push created tp into turnPoints vector
-
-			this->addTurnPoint(tp);
-		}
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		this->setMovementDirection(4); // upward
-
-		//only if there are already collected balls
-		if (this->getCollectedBallsLength() > 0)
-		{
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
-			tp.setNewDirection(4);
-			// push created tp into turnPoints vector
-
-			this->addTurnPoint(tp);
-		}
-
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		this->setMovementDirection(2); // downwards
-
-		//only if there are already collected balls
-		if (this->getCollectedBallsLength() > 0)
-		{
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
-			tp.setNewDirection(2);
-			// push created tp into turnPoints vector
-
-			this->addTurnPoint(tp);
-		}
-	}
-
-	
-
-}
-
-void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
-{
-	//checks continuously for collision with game Window borders
-	//Up
-	if (this->getYPosition() <= 0.f)
-		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
-	//Down
-	if (this->getYPosition() + shape.getGlobalBounds().height >= target->getSize().y)
-		this->shape.setPosition(shape.getGlobalBounds().left, target->getSize().y - shape.getGlobalBounds().height);
-
-	//Left
-	if (this->getXPosition() <= 0.f)
-		this->shape.setPosition(0.f, shape.getGlobalBounds().top);
-		//Right
-	if (this->getXPosition() + shape.getGlobalBounds().width >= target->getSize().x)
-		this->shape.setPosition(target->getSize().x - shape.getGlobalBounds().width, shape.getGlobalBounds().top);
-	
-}
-
 void Player::render(sf::RenderTarget * targetWindow)
 {
 	//render player shape to game window
@@ -270,11 +419,6 @@ void Player::render(sf::RenderTarget * targetWindow)
 	}
 }
 
-const sf::RectangleShape & Player::getShape() const
-{
-	//returns the player's shape
-	return this->shape;
-}
 
 //accesors
 void Player::setMovementDirection(int d)
@@ -361,5 +505,11 @@ void Player::addTurnPoint(TurnPoint tP)
 int Player::getTurnPointsLength()
 {
 	return turnPoints.size();
+}
+
+const sf::RectangleShape& Player::getShape() const
+{
+	//returns the player's shape
+	return this->shape;
 }
 
