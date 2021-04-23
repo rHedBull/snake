@@ -1,8 +1,8 @@
 #include "Game.h"
-
+#include "Util.h"
 
 //private functions:
-void Game::initVariables(int width, int height, int frameRate, string name)
+void Game::initVariables(int width, int height, int frameRate, std::string name)
 {
 	//initialize game variables
 	this->window = nullptr;
@@ -31,7 +31,8 @@ void Game::initWindow()
 void Game::ballSpawn()
 {
 	//spawn the newest ball
-	Ball ball = Ball(this->getWidth(), this->getHeight());
+	Ball ball = Ball(this->getWidth(), this->getHeight(), this->getBallCount());
+	this->setBallCount(this->getBallCount() + 1);
 	addBall(ball); // pushes the newly created ball into the Game classes vector newBall
 }
 
@@ -43,9 +44,9 @@ void Game::reassignBall() {
 
 	//place ball behind the player
 	//get player's position
-	float x_pos = this->player.getShape().getGlobalBounds().left;
-	float y_pos = this->player.getShape().getGlobalBounds().top;
-	float offset = (this->player.getWidth()) * 1.5; // to place ball behind player depends on direction
+	float x_pos = this->player.getXPosition();
+	float y_pos = this->player.getYPosition();
+	float offset = ((this->player.getWidth()) * 1.5) * ((float) this->player.getCollectedBallsLength() + 1.0); // to place ball behind player depends on direction
 	if (dir == 1) // to the right
 	{
 		this->newBall.front().align(x_pos - offset, y_pos);
@@ -62,15 +63,27 @@ void Game::reassignBall() {
 		this->newBall.front().align(x_pos, y_pos + offset);
 	}	
 
+	
 	this->player.addBall(this->newBall.front()); // moves newest ball to player's ball collection
 
 	this->emptyBall(); // deletes Ball from Game classes vector newBall
 	logger(1, "old \"newBall\" \'ball\' has been deleted");
 }
 
+void Game::updateCollision()
+{
+	// updates collision between player and newest ball
+	if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
+	{
+		logger(1, "collision occured!");
+		this->reassignBall(); //configere new ball handling
+		this->ballSpawn(); // creates new ball
+	}
+}
+
 
 //constructor:
-Game::Game(int width, int height, int frameRate, string name)
+Game::Game(int width, int height, int frameRate, std::string name)
 {
 	logger(1, "intialize game");
 	this->initVariables(width, height, frameRate, name);
@@ -138,16 +151,7 @@ void Game::update()
 	this->updateCollision();
 }
 
-void Game::updateCollision()
-{
-	// updates collision between player and newest ball
-		if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
-		{
-			logger(1, "collision occured!");
-			this->reassignBall(); //configere new ball handling
-			this->ballSpawn(); // creates new ball
-		}
-}
+
 
 
 //accessors:
@@ -155,6 +159,15 @@ const bool Game::running() const
 {
 	// test if the game window still is opened
 	return this->window->isOpen();
+}
+
+void Game::setBallCount(int c)
+{
+	this->ballCount = c;
+}
+int Game::getBallCount() const
+{
+	return this->ballCount;
 }
 
 void Game::setWidth(int w)
@@ -184,11 +197,11 @@ int Game::getFrameRate()
 	return this->frameRate;
 }
 
-void Game::setName(string n)
+void Game::setName(std::string n)
 {
 	this->name = n;
 }
-string Game::getName()
+std::string Game::getName()
 {
 	return this->name;
 }

@@ -1,6 +1,5 @@
 // snakeGame.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
-
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -11,8 +10,7 @@
 
 #include "Game.h"
 #include "Util.h"
-#include "Player.h"
-#include "Ball.h"
+
 
 
 void test() {

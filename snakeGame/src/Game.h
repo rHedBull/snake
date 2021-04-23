@@ -1,6 +1,6 @@
-#pragma once
+#ifndef Game_H
+#define Game_H
 
-#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
@@ -9,9 +9,8 @@
 #include <iostream>
 #include <vector>
 
-#include "Player.h"
-#include "Util.h"
 #include "Ball.h"
+#include "Player.h"
 
 class Game
 {
@@ -26,25 +25,26 @@ private:
 	int width;
 	int height;
 	int frameRate;
-	string name;
+	std::string name;
 
 
 	// Game objects
 	// player object is created as part of game init
 	Player player;  
 	std::vector <Ball> newBall; // always just one element, the newest spanned ball
-	
+	int ballCount = 1;
 
 	//private functions
-	void initVariables(int width, int height, int frameRate, string name);
+	void initVariables(int width, int height, int frameRate, std::string name);
 	void initWindow();
 	void ballSpawn();
 	void reassignBall();
+	void updateCollision();
 	
 
 public:
 	//constructor
-	Game(int width, int height, int frameRate, string name);
+	Game(int width, int height, int frameRate, std::string name);
 
 	//destructor
 	~Game();
@@ -54,11 +54,13 @@ public:
 	void pollEvents();
 	void update();
 	void render();
-	void updateCollision();
 
 
 	//accessors:
 	const bool running() const;
+
+	void setBallCount(int c);
+	int getBallCount() const;
 
 	void setWidth(int w);
 	int getWidth();
@@ -69,10 +71,11 @@ public:
 	void setFrameRate(int fR);
 	int getFrameRate();
 
-	void setName(string n);
-	string getName();
+	void setName(std::string n);
+	std::string getName();
 
 	void addBall(Ball b);
 	void emptyBall();
 };
 
+#endif
