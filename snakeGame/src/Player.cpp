@@ -4,34 +4,38 @@
 
 
 //private functions
-void Player::initShape()
+//--------------------------- init Player------------------------------------------------------------
+void Player::initShape(float ix, float iy)
 {
 	// create the rectangle
 	this->shape.setFillColor(sf::Color::Green);
 	this->shape.setSize(sf::Vector2f(this->getWidth(), this->getHeight()));
-	this->shape.setPosition(this->getInitX(), this->getInitY());
-	logger(1, "player shape initialized at x:" + std::to_string(this->initX) + ", y:" + std::to_string(this->initY));
+	this->shape.setPosition(ix, iy);
+	logger(1, "player shape initialized at x:" + std::to_string(ix) + ", y:" + std::to_string(iy));
 
 }
 
-void Player::initVariables(float iX, float iY, float w, float h)
+void Player::initVariables( float w, float h)
 {
-	this->setInitX(iX);
-	this->setInitY(iY);
 	this->setWidth(w);
 	this->setHeight(h);
-	this->setMovementSpeed(1.f);
 
 	// set random start direction
 	int r = (rand() % 4) + 1;
 	this->setMovementDirection(r);
+}
+// ------------------------------------------------------------------------------------------------------
+
+void Player::updateVariables(float speed)
+{
+	this->setMovementSpeed(speed);
 }
 
 void Player::moving()
 {
 	// moves the player every time the function is called in the movementDirection
 	// 	   so that he moves continuously
-
+	
 	//left
 	if(this->getMovementDirection() == 3)
 		this->shape.move(-this->getMovementSpeed(), 0.f);
@@ -43,7 +47,7 @@ void Player::moving()
 		this->shape.move(0.f, this->getMovementSpeed());
 	//up
 	else if (this->getMovementDirection() == 4)
-		this->shape.move(0.f , -this->getMovementSpeed());
+		this->shape.move(0.f, -this->getMovementSpeed());
 }
 
 void Player::updateTurnPointCollision()
@@ -112,7 +116,7 @@ void Player::updateCollectedBalls()
 	int i = 0;
 	while (i < this->getCollectedBallsLength())
 	{
-		this->collectedBalls[i].update();
+		this->collectedBalls[i].update(this->getMovementSpeed());
 
 		i++;
 	}
@@ -120,7 +124,6 @@ void Player::updateCollectedBalls()
 
 void Player::updateInput() {
 	//keypoard input collects the change of directions by ASWD and arrow keys
-
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
@@ -141,7 +144,7 @@ void Player::updateInput() {
 				this->setMovementDirection(3); // to the left
 
 				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 				tp.setNewDirection(3);
 				// push created tp into turnPoints vector
 
@@ -157,7 +160,7 @@ void Player::updateInput() {
 					this->setMovementDirection(3); // to the left
 
 					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 					tp.setNewDirection(3);
 					// push created tp into turnPoints vector
 
@@ -186,7 +189,7 @@ void Player::updateInput() {
 				this->setMovementDirection(1); // to the right
 
 				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 				tp.setNewDirection(1);
 				// push created tp into turnPoints vector
 
@@ -202,7 +205,7 @@ void Player::updateInput() {
 					this->setMovementDirection(1); // to the right
 
 					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 					tp.setNewDirection(1);
 					// push created tp into turnPoints vector
 
@@ -232,7 +235,7 @@ void Player::updateInput() {
 				this->setMovementDirection(4); // upwards
 
 				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 				tp.setNewDirection(4);
 				// push created tp into turnPoints vector
 
@@ -248,7 +251,7 @@ void Player::updateInput() {
 					this->setMovementDirection(4); // upwards
 
 					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 					tp.setNewDirection(4);
 					// push created tp into turnPoints vector
 
@@ -277,7 +280,7 @@ void Player::updateInput() {
 				this->setMovementDirection(2); // downwards
 
 				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 				tp.setNewDirection(2);
 				// push created tp into turnPoints vector
 
@@ -293,7 +296,7 @@ void Player::updateInput() {
 					this->setMovementDirection(2); // downwards
 
 					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPosition(), this->getYPosition());
+					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
 					tp.setNewDirection(2);
 					// push created tp into turnPoints vector
 
@@ -304,25 +307,23 @@ void Player::updateInput() {
 		}
 	}
 
-
-
 }
 
 void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
 	//checks continuously for collision with game Window borders
 	//Up
-	if (this->getYPosition() <= 0.f)
+	if (this->getYPos() <= 0.f)
 		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
 	//Down
-	if (this->getYPosition() + shape.getGlobalBounds().height >= target->getSize().y)
+	if (this->getYPos() + shape.getGlobalBounds().height >= target->getSize().y)
 		this->shape.setPosition(shape.getGlobalBounds().left, target->getSize().y - shape.getGlobalBounds().height);
 
 	//Left
-	if (this->getXPosition() <= 0.f)
+	if (this->getXPos() <= 0.f)
 		this->shape.setPosition(0.f, shape.getGlobalBounds().top);
 	//Right
-	if (this->getXPosition() + shape.getGlobalBounds().width >= target->getSize().x)
+	if (this->getXPos() + shape.getGlobalBounds().width >= target->getSize().x)
 		this->shape.setPosition(target->getSize().x - shape.getGlobalBounds().width, shape.getGlobalBounds().top);
 
 }
@@ -333,19 +334,19 @@ bool Player::checkTPDist(int mDir)
 		float dist; // distance between last turnPoint and wanted new one at current Player's position
 		if (mDir == 1) // to the right
 		{
-			dist = this->getXPosition() - this->turnPoints.back().getXPos();
+			dist = this->getXPos() - this->turnPoints.back().getXPos();
 		}
 		else if (mDir == 2) //downwards
 		{
-			dist = this->getYPosition() - this->turnPoints.back().getYPos();
+			dist = this->getYPos() - this->turnPoints.back().getYPos();
 		}
 		else if (mDir == 3) // to the left
 		{
-			dist = this->turnPoints.back().getXPos() - this->getXPosition();
+			dist = this->turnPoints.back().getXPos() - this->getXPos();
 		}
 		else if (mDir == 4) //upwards
 		{
-			dist = this->turnPoints.back().getYPos() - this->getYPosition();
+			dist = this->turnPoints.back().getYPos() - this->getYPos();
 		}
 
 		bool space = (dist > this->getWidth() + 5);
@@ -364,8 +365,8 @@ Player::Player()
 }
 Player::Player(float iX, float iY, float w, float h)
 {
-	this->initVariables( iX,  iY,  w,  h);
-	this->initShape();
+	this->initVariables( w,  h);
+	this->initShape(iX, iY);
 }
 
 //destructor
@@ -375,23 +376,26 @@ Player::~Player()
 
 
 //public functions
-void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWindow
+void Player::update(sf::RenderTarget* targetWindow, float newSpeed) //sf::RenderTarget* targetWindow
 {
+	updateVariables(newSpeed);
+
 	//get keystrokes
 	this->updateInput();
+
+	//if collected ball collides with turn point
+	this->updateTurnPointCollision();
 
 	//move player in direction
 	this->moving();
 
 	//window bounds collision
-	//targetWindow->getSize();
 	this->updateWindowBoundsCollision(targetWindow);
 
 	//update the players collected balls
 	this->updateCollectedBalls();
 
-	//if collected ball collides with turn point
-	this->updateTurnPointCollision();
+
 
 }
 
@@ -421,24 +425,6 @@ void Player::render(sf::RenderTarget * targetWindow)
 
 
 //accesors
-void Player::setMovementDirection(int d)
-{
-	this->movementDirection = d;
-}
-int Player::getMovementDirection()
-{
-	return this->movementDirection;
-}
-
-void Player::setMovementSpeed(float s)
-{
-	this->movementSpeed = s;
-}
-float Player::getMovementSpeed()
-{
-	return this->movementSpeed;
-}
-
 void Player::setWidth(float w)
 {
 	this->width = w;
@@ -457,29 +443,11 @@ float Player::getHeight()
 	return this->height;
 }
 
-void Player::setInitX(float iX)
-{
-	this->initX = iX;
-}
-float Player::getInitX()
-{
-	return this->initX;
-}
-
-void Player::setInitY(float iY)
-{
-	this->initY = iY;
-}
-float Player::getInitY()
-{
-	return this->initY;
-}
-
-float Player::getXPosition()
+float Player::getXPos()
 {
 	return  this->getShape().getGlobalBounds().left;
 }
-float Player::getYPosition()
+float Player::getYPos()
 {
 	return this->getShape().getGlobalBounds().top;
 }
@@ -491,7 +459,6 @@ void Player::addBall(Ball b)
 
 	//give the newly added ball direction and speed of player to follow him
 	this->collectedBalls.back().setMovementDirection(this->getMovementDirection());
-	this->collectedBalls.back().setMovementSpeed(this->getMovementSpeed());
 }
 int Player::getCollectedBallsLength()
 {

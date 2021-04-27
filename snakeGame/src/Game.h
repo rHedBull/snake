@@ -17,7 +17,8 @@ class Game
 private:
 
 	//private variables
-	
+	float movementSpeed;
+
 	//window variables
 	sf::RenderWindow* window;
 	sf::Event ev;
@@ -35,7 +36,7 @@ private:
 	int ballCount = 1;
 
 	//private functions
-	void initVariables(int width, int height, int frameRate, std::string name);
+	void initVariables(int width, int height, int frameRate, float speed, std::string name);
 	void initWindow();
 	void ballSpawn();
 	void reassignBall();
@@ -44,7 +45,7 @@ private:
 
 public:
 	//constructor
-	Game(int width, int height, int frameRate, std::string name);
+	Game(int width, int height, int frameRate, float speed, std::string name);
 
 	//destructor
 	~Game();
@@ -58,6 +59,9 @@ public:
 
 	//accessors:
 	const bool running() const;
+
+	float getMovementSpeed();
+	void setMovementSpeed(float s);
 
 	void setBallCount(int c);
 	int getBallCount() const;

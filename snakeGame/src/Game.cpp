@@ -2,7 +2,7 @@
 #include "Util.h"
 
 //private functions:
-void Game::initVariables(int width, int height, int frameRate, std::string name)
+void Game::initVariables(int width, int height, int frameRate, float speed, std::string name)
 {
 	//initialize game variables
 	this->window = nullptr;
@@ -10,6 +10,7 @@ void Game::initVariables(int width, int height, int frameRate, std::string name)
 	this->setHeight(height);
 	this->setWidth(width);
 	this->setName(name);
+	this->setMovementSpeed(speed);
 	logger(1, "game variables initialized");
 
 	//define Player
@@ -44,8 +45,8 @@ void Game::reassignBall() {
 
 	//place ball behind the player
 	//get player's position
-	float x_pos = this->player.getXPosition();
-	float y_pos = this->player.getYPosition();
+	float x_pos = this->player.getXPos();
+	float y_pos = this->player.getYPos();
 	float offset = ((this->player.getWidth()) * 1.5) * ((float) this->player.getCollectedBallsLength() + 1.0); // to place ball behind player depends on direction
 	if (dir == 1) // to the right
 	{
@@ -83,12 +84,12 @@ void Game::updateCollision()
 
 
 //constructor:
-Game::Game(int width, int height, int frameRate, std::string name)
+Game::Game(int width, int height, int frameRate, float speed, std::string name)
 {
 	logger(1, "intialize game");
-	this->initVariables(width, height, frameRate, name);
+	this->initVariables(width, height, frameRate, speed,  name);
 	this->initWindow();
-	this->ballSpawn(); //create first ball
+	this->ballSpawn(); //create first ball commented out while new Movement scheme is developed
 	logger(1, "game initialized");
 }
 
@@ -132,7 +133,7 @@ void Game::render()
 
 	//render objects
 	this->player.render(this->window);     // also calls rendering for the collected balls!
-	this->newBall[0].render(this->window);
+	this->newBall[0].render(this->window); //commented out while new Movement scheme is developed
 	
 	
 	
@@ -145,10 +146,10 @@ void Game::update()
 	// poll for newest events(keypress, ...)
 	this->pollEvents();
 
-	this->player.update(this->window); //only one instance of player, also calls updating the collected balls
+	this->player.update(this->window, this->getMovementSpeed()); //only one instance of player, also calls updating the collected balls
 	
 	//update interactions between multiple objects
-	this->updateCollision();
+	this->updateCollision(); //commented out while new Movement scheme is developed
 }
 
 
@@ -159,6 +160,15 @@ const bool Game::running() const
 {
 	// test if the game window still is opened
 	return this->window->isOpen();
+}
+
+float Game::getMovementSpeed()
+{
+	return this->movementSpeed;
+}
+void Game::setMovementSpeed(float s)
+{
+	this->movementSpeed = s;
 }
 
 void Game::setBallCount(int c)

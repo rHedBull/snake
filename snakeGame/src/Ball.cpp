@@ -1,11 +1,17 @@
 #include "Ball.h"
 #include "Util.h"
 
+
 //private functions
 void Ball::initVars(float w, int numb) {
 	//initialize variables
 	this->setBallNumb(numb);
 	this->setRadius(w/30); // set radius relative to width of window
+}
+
+void Ball::updateVariables(float newSpeed)
+{
+	this->setMovementSpeed(newSpeed);
 }
 
 void Ball::initShape(int x, int y)
@@ -28,9 +34,9 @@ void Ball::initShape(int x, int y)
 
 void Ball::moving()
 {
-	// moves the player every time the function is called in the movementDirection
+	// moves the ball every time the function is called in the movementDirection
 	// 	   so that he moves continuously
-
+	
 	//left
 	if (this->getMovementDirection() == 3)
 		this->shape.move(-this->getMovementSpeed(), 0.f);
@@ -63,8 +69,10 @@ Ball::~Ball()
 
 
 //public functions
-void Ball::update()
+void Ball::update(float newSpeed)
 {
+	updateVariables(newSpeed);
+
 	if (this->getMovementDirection() > 0)
 	{
 		this->moving();
@@ -104,24 +112,6 @@ void Ball::setRadius(int r)
 int Ball::getRadius()
 {
 	return this->radius;
-}
-
-void Ball::setMovementSpeed(float v)
-{
-	this->movementSpeed = v;
-}
-float Ball::getMovementSpeed()
-{
-	return this->movementSpeed;
-}
-
-void Ball::setMovementDirection(int r)
-{
-	this->movementDirection = r;
-}
-int Ball::getMovementDirection()
-{
-	return this->movementDirection;
 }
 
 const sf::CircleShape Ball::getShape() const

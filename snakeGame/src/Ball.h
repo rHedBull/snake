@@ -2,31 +2,22 @@
 #define Ball_H
 
 #include <SFML/Graphics.hpp>
+#include "GameObj.h"
 
-class Ball
+class Ball: public GameObj 
 {
 private:
 	//private variables
-	// 
+	
 	//shape
 	sf::CircleShape shape;
 	int radius;
 	int ballNumb;
 
-	//movement
-	float movementSpeed;
-	int movementDirection;
-	/*
-	 1= to the right -->
-	 2 = downwards
-	 3 = to the left <--
-	 4 = upwards
-	*/
-	
-
 
 	//private functions
 	void initVars(float w, int numb);
+	void updateVariables(float newSpeed);
 	void initShape(int x, int y);
 	void moving();
 
@@ -41,7 +32,7 @@ public:
 
 
 	//public functions
-	void update();
+	void update(float newSpeed);
 	void render(sf::RenderTarget* targetWindow);
 	void align(float x, float y);
 
@@ -52,12 +43,6 @@ public:
 
 	void setRadius(int r);
 	int getRadius();
-	
-	void setMovementSpeed(float v);
-	float getMovementSpeed();
-
-	void setMovementDirection(int r);
-	int getMovementDirection();
 
 	const sf::CircleShape getShape() const;
 };
