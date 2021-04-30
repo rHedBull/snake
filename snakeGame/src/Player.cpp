@@ -1,36 +1,55 @@
 #include "Player.h"
 #include "Util.h"
-#include "TurnPoint.h"
 
 
 //private functions
 //--------------------------- init Player------------------------------------------------------------
-void Player::initShape(float ix, float iy)
+/*
+initializes the player object's variables
+parameters:
+float width;
+float height;
+*/
+void Player::initVariables( float width, float height)
 {
-	// create the rectangle
-	this->shape.setFillColor(sf::Color::Green);
-	this->shape.setSize(sf::Vector2f(this->getWidth(), this->getHeight()));
-	this->shape.setPosition(ix, iy);
-	logger(1, "player shape initialized at x:" + std::to_string(ix) + ", y:" + std::to_string(iy));
-
-}
-
-void Player::initVariables( float w, float h)
-{
-	this->setWidth(w);
-	this->setHeight(h);
+	this->setWidth(width);
+	this->setHeight(height);
 
 	// set random start direction
 	int r = (rand() % 4) + 1;
 	this->setMovementDirection(r);
 }
+
+/*
+initializes the player object's shape
+parameters:
+float initialX;
+float initialY;
+*/
+void Player::initShape(float initialX, float initialY)
+{
+	// create the rectangle
+	this->shape.setFillColor(sf::Color::Green);
+	this->shape.setSize(sf::Vector2f(this->getWidth(), this->getHeight()));
+	this->shape.setPosition(initialX, initialY);
+	logger(1, "player shape initialized at x:" + std::to_string(initialX) + ", y:" + std::to_string(initialY));
+
+}
 // ------------------------------------------------------------------------------------------------------
 
+/*
+update the Player's variables
+parameters:
+float speed;
+*/
 void Player::updateVariables(float speed)
 {
 	this->setMovementSpeed(speed);
 }
 
+/*
+moves the player in the current movementDirection
+*/
 void Player::moving()
 {
 	// moves the player every time the function is called in the movementDirection
@@ -50,6 +69,9 @@ void Player::moving()
 		this->shape.move(0.f, -this->getMovementSpeed());
 }
 
+/*
+update all the from the player collected balls
+*/
 void Player::updateCollectedBalls()
 {
 	int i = 0;
@@ -79,144 +101,142 @@ void Player::updateCollectedBalls()
 	}
 }
 
+/*
+checks if enough space to last segment
+parameters:
+int oldDirection; 
+*/
+bool Player::segmentSpacing(int oldDirection)
+{
+	bool space = false;
+
+	if (oldDirection == 1) // to the right -->
+	{
+		// check if enough space between current player position and last segment start
+		space = (this->getXPos() - segments.back().getStartPoint()) > this->getWidth();
+
+	}
+	else if (oldDirection == 3) // to the left <--
+	{
+		// check if enough space between current player position and last segment start
+		space = (segments.back().getStartPoint() - this->getXPos()) > this->getWidth();
+
+	}
+	else if (oldDirection == 4) // upwards
+	{
+		// check if enough space between current player position and last segment start
+		space = (segments.back().getStartPoint() - this->getYPos()) > this->getHeight();
+
+	}
+	else if (oldDirection == 2) //downwards
+	{
+		// check if enough space between current player position and last segment start
+		space = (this->getYPos() - segments.back().getStartPoint()) > this->getHeight();
+	}
+
+	return space;
+}
+
+/*
+keypoard input collects the change of directions by ASWD and arrow keys
+*/
 void Player::updateInput() {
-	//keypoard input collects the change of directions by ASWD and arrow keys
+	
+	bool leftKey = sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
+	bool rightKey = sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
+	bool upKey = sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
+	bool downKey = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	if (leftKey || rightKey || upKey || downKey)// check if any of the keys is pressed
 	{
-		this->setMovementDirection(3); // set players movementDirection to the left
+		int newDir = this->getMovementDirection();
 
-		// check if there are already any balls collected
-		bool collected = !this->collectedBalls.empty();
-
-		if (collected == true)
+		//assign right int to newDirection, according to keysPressed
+		if (leftKey)
 		{
+			newDir = 3;
 
-			//Segment seg = Segment(-10, this->getMovementDirection(), this->getSegmentCount());
-
-			
-			// check if there are already any turn points
-			bool empty = this->turnPoints.empty();
-
-			if (empty == false)
-			{
-				// check if turn point is not overlapping
-				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
-
-				if (overlapping == true)
-				{
-					return;
-				}
-				
-			}
-		
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-			tp.setNewDirection(3);
-			// push created tp into turnPoints vector
-
-			this->turnPoints.push_back(tp);
 		}
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		this->setMovementDirection(1); // set players movementDirection to the left
-
-		// check if there are already any balls collected
-		bool collected = !this->collectedBalls.empty();
-
-		if (collected == true)
+		else if (rightKey)
 		{
-			// check if there are already any turn points
-			bool empty = this->turnPoints.empty();
+			newDir = 1;
 
-			if (empty == false)
-			{
-				// check if turn point is not overlapping
-				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
-
-				if (overlapping == true)
-				{
-					return;
-				}
-			}
-
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-			tp.setNewDirection(1);
-			// push created tp into turnPoints vector
-
-			this->turnPoints.push_back(tp);
 		}
-	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		this->setMovementDirection(4); // set players movementDirection to the left
-
-		// check if there are already any balls collected
-		bool collected = !this->collectedBalls.empty();
-
-		if (collected == true)
+		if (upKey)
 		{
-			// check if there are already any turn points
-			bool empty = this->turnPoints.empty();
+			newDir = 4;
 
-			if (empty == false)
+		}
+		else if (downKey)
+		{
+			newDir = 2;
+
+		}
+
+		if (this->collectedBalls.empty() == false) // checks if any balls have already been collected
+		{
+			if (this->segments.empty() == false) //checks if there are already any segments
 			{
-				// check if turn point is not overlapping
-				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
-
-				if (overlapping == true)
+				if (segmentSpacing(this->getMovementDirection()) == true) // checks if enough space to last segment
 				{
-					return;
+					this->updateSegments();
 				}
+				else {
+					return; // exit this method without any further action
+				}
+
 			}
 
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-			tp.setNewDirection(4);
-			// push created tp into turnPoints vector
 
-			this->turnPoints.push_back(tp);
-		}
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		this->setMovementDirection(2); // set players movementDirection to the left
+			float preEndPoint = 0;
+			float sPoint = 0;
 
-		// check if there are already any balls collected
-		bool collected = !this->collectedBalls.empty();
-
-		if (collected == true)
-		{// check if there are already any turn points
-			bool empty = this->turnPoints.empty();
-
-			if (empty == false)
+			//assign start point and preliminary endPoints to variables
+			//horizontal
+			if (leftKey)
 			{
-				// check if turn point is not overlapping
-				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
-
-				if (overlapping == true)
-				{
-					return;
-				}
+				preEndPoint = -10.0;   //preliminary endPoint
+				sPoint = this->getXPos();
+			}
+			else if (rightKey)
+			{
+				preEndPoint = 100000.0;//preliminary endPoint
+				sPoint = this->getXPos();
 			}
 
-			//define new turnpoint
-			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-			tp.setNewDirection(2);
-			// push created tp into turnPoints vector
+			//vertical
+			if (upKey)
+			{
+				preEndPoint = -10.0;   //preliminary endPoint
+				sPoint = this->getYPos();
+			}
+			else if (downKey)
+			{
+				preEndPoint = 100000.0;//preliminary endPoint
+				sPoint = this->getYPos();
+			}
 
-			this->turnPoints.push_back(tp);
+			// create new segment for balls, endPoint is only perliminary
+			Segment seg = Segment(sPoint, preEndPoint, newDir, this->getSegmentCount());
+			this->segments.push_back(seg); //push created segment into segments vector
+			this->setSegmentCount(this->getSegmentCount() + 1); //count segmentCounter one up
+
 		}
+
+		this->setMovementDirection(newDir);
+
 	}
 
 }
 
+/*
+checks continuously for collision with game Window borders
+parameters:
+const sf::RenderTarget* target;
+*/
 void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
-	//checks continuously for collision with game Window borders
 	//Up
 	if (this->getYPos() <= 0.f)
 		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
@@ -233,6 +253,7 @@ void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 
 }
 
+/*
 bool Player::checkOverlappingTP(int mDir)
 {
 		//check for enough distance between 2 turn points
@@ -263,47 +284,26 @@ bool Player::checkOverlappingTP(int mDir)
 		else {
 			return true;
 		}
-}
+}*/
 
+
+/*
+update the last preliminary segment
+*/
 void Player::updateSegments()
 {
-	//checks if 2 turnPoints exist in vector turnPoints and then creates a segment ending in the latter turnPoint
-	if (this->turnPoints.size() >= 2)
+	if (this->getMovementDirection() == (1 || 3)) // last movement was horizontal
 	{
-		/*
-		int dir = turnPoints.front().getNewDirection();
-		Segment segment;
-		if (dir == 1 || dir == 3)
-		{
-			segment = Segment(turnPoints.back().getXPos(), dir, this->getSegmentCount());
-			this->setSegmentCount(this->getSegmentCount() + 1);
-		}
-		else if (dir == 2 || dir == 4)
-		{
-			segment = Segment(turnPoints.back().getYPos(), dir, this->getSegmentCount());
-			this->setSegmentCount(this->getSegmentCount() + 1);
-		}
-		turnPoints.erase(this->turnPoints.begin()); // destroys all turnPoints
-		this->segments.push_back(segment); // add created segment to vector segments
-		*/
-		this->turnPoints.erase(this->turnPoints.begin());
-
-	}else if (this->turnPoints.size() == 1) //if only one turnPoint exist, L shape player and balls, create segment from last collected ball to turnPoint
-	{
-		int dir = turnPoints.front().getNewDirection();
-		Segment segment;
-		if (dir == 1 || dir == 3)
-		{
-			segment = Segment(turnPoints.back().getXPos(), dir, this->getSegmentCount());
-			this->setSegmentCount(this->getSegmentCount() + 1);
-		}
-		else if (dir == 2 || dir == 4)
-		{
-			segment = Segment(turnPoints.back().getYPos(), dir, this->getSegmentCount());
-			this->setSegmentCount(this->getSegmentCount() + 1);
-		}
-		this->segments.push_back(segment); // add created segment to vector segments
+		//set new Endpoint for last segment
+		this->segments.back().setEndPoint(this->getXPos());
 	}
+	else 
+	{	// last movement was vertical
+		//set new Endpoint for last segment
+		this->segments.back().setEndPoint(this->getYPos());
+	}
+
+	logger(1, "segment " + to_string(segments.back().getId()) + " endPoint updated to: " + to_string(this->segments.back().getEndPoint()));
 }
 
 
@@ -312,10 +312,19 @@ Player::Player()
 {
 
 }
-Player::Player(float iX, float iY, float w, float h)
+
+/*
+creates instance of Player class
+paramters:
+float initialX;
+float initialY;
+float width;
+float height;
+*/
+Player::Player(float initialX, float initialY, float width, float height)
 {
-	this->initVariables( w,  h);
-	this->initShape(iX, iY);
+	this->initVariables(width, height);
+	this->initShape(initialX, initialY);
 }
 
 //destructor
@@ -342,11 +351,13 @@ void Player::update(sf::RenderTarget* targetWindow, float newSpeed)
 	//update the players collected balls
 	this->updateCollectedBalls();
 
-	//update if new segments must be created
-	this->updateSegments();
-
 }
 
+/*
+render all the Player's shapes to the target window
+parameters:
+sf::RenderTarget * targetWindow;
+*/
 void Player::render(sf::RenderTarget * targetWindow)
 {
 	//render player shape to game window

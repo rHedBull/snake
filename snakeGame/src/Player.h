@@ -32,9 +32,10 @@ private:
 	void updateCollectedBalls();
 	void updateInput();
 	void updateWindowBoundsCollision(const sf::RenderTarget* target);
-	bool checkOverlappingTP(int movementDirection);
+	//bool checkOverlappingTP(int movementDirection);
 	void updateVariables(float speed);
 	void updateSegments();
+	bool segmentSpacing(int oldDirection);
 
 	
 public:

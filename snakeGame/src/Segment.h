@@ -11,6 +11,7 @@ class Segment
 	*/
 private:
 	float endPoint;
+	float startPoint;
 	int direction;
 	int id;
 
@@ -19,7 +20,7 @@ private:
 public:
 	//constructor
 	Segment();
-	Segment(float ep, int dir, int id);
+	Segment(float startPoint, float endPoint, int direction, int id);
 
 	//destructor
 	~Segment();
@@ -28,6 +29,9 @@ public:
 	//accessor
 	float getEndPoint();
 	void setEndPoint(float eP);
+
+	float getStartPoint();
+	void setStartPoint(float sP);
 
 	int getDirection();
 	void setDirection(int dir);

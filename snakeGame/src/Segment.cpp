@@ -7,10 +7,19 @@ Segment::Segment()
 {
 
 }
-Segment::Segment(float ep, int dir, int id)
+/*
+create instance of segment class
+parameters:
+float startPoint;
+float endPoint;
+int direction;
+int id;
+*/
+Segment::Segment(float startPoint, float endPoint, int direction, int id)
 {
-	this->setEndPoint(ep);
-	this->setDirection(dir);
+	this->setStartPoint(startPoint);
+	this->setEndPoint(endPoint);
+	this->setDirection(direction);
 	this->setId(id);
 	logger(1, "segment "+ to_string(id) + " created; dir = " + to_string(this->getDirection()) + ", EndPoint at:" + to_string(this->getEndPoint()));
 }
@@ -30,6 +39,15 @@ float Segment::getEndPoint()
 void Segment::setEndPoint(float eP)
 {
 	this->endPoint = eP;
+}
+
+float Segment::getStartPoint()
+{
+	return this->startPoint;
+}
+void Segment::setStartPoint(float sP)
+{
+	this->startPoint = sP;
 }
 
 int Segment::getDirection()

@@ -17,7 +17,7 @@ private:
 	float movementSpeed;//movement per frame for all objects always the same
 	int movementDirection; //
 	/*
-	 1= to the right -->
+	 1 = to the right -->
 	 2 = downwards
 	 3 = to the left <--
 	 4 = upwards
