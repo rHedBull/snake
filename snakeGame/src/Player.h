@@ -8,6 +8,7 @@
 #include "TurnPoint.h"
 #include "Ball.h"
 #include "GameObj.h"
+#include "Segment.h"
 
 
 class Player: public GameObj
@@ -20,20 +21,20 @@ private:
 
 	
 	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
-	std::vector <TurnPoint> turnPoints;
-	//std::vector <Segment> segments;
-
+	std::vector <TurnPoint> turnPoints; // collects the turnPoints where the Player turns
+	std::vector <Segment> segments; // collects the segments
+	int segmentCount = 0; // only the total count of all the segments which have ever existed in the game
 
 	//private functions
 	void initVariables(float w, float h);
 	void initShape(float ix, float iy);
 	void moving();
 	void updateCollectedBalls();
-	void updateTurnPointCollision();
 	void updateInput();
 	void updateWindowBoundsCollision(const sf::RenderTarget* target);
-	bool checkTPDist(int movementDirection);
+	bool checkOverlappingTP(int movementDirection);
 	void updateVariables(float speed);
+	void updateSegments();
 
 	
 public:
@@ -50,7 +51,7 @@ public:
 	void render(sf::RenderTarget* targetWindow);
 
 
-	//accesors
+	//accessors
 	void setWidth(float w);
 	float getWidth();
 
@@ -62,10 +63,11 @@ public:
 
 	void addBall(Ball b);
 	int getCollectedBallsLength();
+	
+	void setSegmentCount(int c);
+	int getSegmentCount();
 
-	void addTurnPoint(TurnPoint tP);
 	int getTurnPointsLength();
-
 	const sf::RectangleShape& getShape() const;
 
 

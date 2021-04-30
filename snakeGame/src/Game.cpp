@@ -34,7 +34,7 @@ void Game::ballSpawn()
 	//spawn the newest ball
 	Ball ball = Ball(this->getWidth(), this->getHeight(), this->getBallCount());
 	this->setBallCount(this->getBallCount() + 1);
-	addBall(ball); // pushes the newly created ball into the Game classes vector newBall
+	this->newBall.push_back(ball); // pushes the newly created ball into the Game classes vector newBall
 }
 
 void Game::reassignBall() {
@@ -67,7 +67,7 @@ void Game::reassignBall() {
 	
 	this->player.addBall(this->newBall.front()); // moves newest ball to player's ball collection
 
-	this->emptyBall(); // deletes Ball from Game classes vector newBall
+	this->newBall.clear(); // deletes Ball from Game classes vector newBall
 	logger(1, "old \"newBall\" \'ball\' has been deleted");
 }
 
@@ -77,7 +77,7 @@ void Game::updateCollision()
 	if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
 	{
 		logger(1, "collision occured!");
-		this->reassignBall(); //configere new ball handling
+		this->reassignBall(); //configure new ball handling
 		this->ballSpawn(); // creates new ball
 	}
 }
@@ -133,9 +133,9 @@ void Game::render()
 
 	//render objects
 	this->player.render(this->window);     // also calls rendering for the collected balls!
-	this->newBall[0].render(this->window); //commented out while new Movement scheme is developed
-	
-	
+
+	//render the newBall
+	this->newBall[0].render(this->window); 
 	
 	//draw game:
 	this->window -> display();
@@ -146,13 +146,13 @@ void Game::update()
 	// poll for newest events(keypress, ...)
 	this->pollEvents();
 
-	this->player.update(this->window, this->getMovementSpeed()); //only one instance of player, also calls updating the collected balls
-	
-	//update interactions between multiple objects
-	this->updateCollision(); //commented out while new Movement scheme is developed
+	//only one instance of player, also calls updating the collected balls
+	this->player.update(this->window, this->getMovementSpeed());
+
+	//update collision between player and newBall
+	this->updateCollision();
+
 }
-
-
 
 
 //accessors:
@@ -214,16 +214,4 @@ void Game::setName(std::string n)
 std::string Game::getName()
 {
 	return this->name;
-}
-
-void Game::addBall(Ball b)
-{
-	//add ball to vector newBall of the Game class
-	this->newBall.push_back(b); // vector newBall always has only one element so at index = 0
-}
-void Game::emptyBall()
-{
-	//delete ball from the vector newBall from this instance's Game class
-	this->newBall.pop_back();
-
 }

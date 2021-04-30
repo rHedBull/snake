@@ -50,73 +50,30 @@ void Player::moving()
 		this->shape.move(0.f, -this->getMovementSpeed());
 }
 
-void Player::updateTurnPointCollision()
-{
-
-	//check for collisions between all collected balls and all existing turnpoints!
-	int i = 0;
-	int x = 0;
-	while(i < this->getCollectedBallsLength())
-	{
-		x = 0;
-		while (x < this->getTurnPointsLength())
-		{
-			if (this->collectedBalls[i].getShape().getGlobalBounds().intersects(this->turnPoints[x].getShape().getGlobalBounds()))
-			{
-				logger(1, "ball:" + to_string(collectedBalls[i].getBallNumb()) + " collided with turn point");
-
-				// place ball centered behind player
-				//get player's position
-				float x_pos = this->getShape().getGlobalBounds().left;
-				float y_pos = this->getShape().getGlobalBounds().top;
-				float offset = ((this->getWidth()) * 1.5) * ((float)i + 1.0);
-
-				int dir = this->turnPoints[x].getNewDirection();
-
-				if (dir == 1) // to the right
-				{
-					this->collectedBalls[i].align(x_pos - offset, y_pos);
-				}
-				else if (dir == 2) // downwards
-				{
-					this->collectedBalls[i].align(x_pos, y_pos - offset);
-				}
-				else if (dir == 3) // to the left
-				{
-					this->collectedBalls[i].align(x_pos + offset, y_pos);
-				}
-				else if (dir == 4) // upwards
-				{
-					this->collectedBalls[i].align(x_pos, y_pos + offset);
-				}
-				logger(1, "ball:" + to_string(collectedBalls[i].getBallNumb()) + " is realigned");
-
-				//assign new movement direction saved in turn point to collided ball
-				this->collectedBalls[i].setMovementDirection(dir);
-				logger(1, "ball:" + to_string(collectedBalls[i].getBallNumb()) + " changed movemenDirection to:" + to_string(dir));
-
-				// if this is the last collected ball the turn point can disappear
-				if (this->collectedBalls[i].getBallNumb() == this->collectedBalls.back().getBallNumb())
-				{
-					this->turnPoints.pop_back();
-
-					logger(1, "turn point deleted");
-				}
-				
-			}
-			x++;
-		}
-		i++;
-	}
-	
-}
-
 void Player::updateCollectedBalls()
 {
 	int i = 0;
-	while (i < this->getCollectedBallsLength())
+	while (i < this->collectedBalls.size())// iterate through all collected balls
 	{
-		this->collectedBalls[i].update(this->getMovementSpeed());
+		
+		this->collectedBalls[i].update(this->getMovementSpeed());// update the overall game variables
+
+		int s;
+		for (s = 0; s < segments.size(); s++) //update through all currently existing segments
+		{
+			Segment seg = this->segments[s];
+			bool obsoleteSegment = this->collectedBalls[i].updateSegmentPath(seg); // send segment an find out if this ball has already finished it
+			if (obsoleteSegment == false) {
+				break; // not yet finished, ball moved, break this segment loop
+			}
+			else if (obsoleteSegment == true && this->collectedBalls[i].getBallNumb() == this->collectedBalls.back().getBallNumb())
+			{
+				//last collected ball has finished the segment
+
+				segments.erase(this->segments.begin());// delete finished segment
+				logger(1, "segment:" + to_string(seg.getId()) + "finished and deleted");
+			}
+		}
 
 		i++;
 	}
@@ -127,183 +84,131 @@ void Player::updateInput() {
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
+		this->setMovementDirection(3); // set players movementDirection to the left
+
 		// check if there are already any balls collected
 		bool collected = !this->collectedBalls.empty();
 
-		if (collected == false)
+		if (collected == true)
 		{
-			this->setMovementDirection(3); // to the left
-		}
-		else
-		{
+
+			//Segment seg = Segment(-10, this->getMovementDirection(), this->getSegmentCount());
+
+			
 			// check if there are already any turn points
 			bool empty = this->turnPoints.empty();
 
-			if (empty == true)
-			{
-				this->setMovementDirection(3); // to the left
-
-				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-				tp.setNewDirection(3);
-				// push created tp into turnPoints vector
-
-				this->addTurnPoint(tp);
-			}
-			else
+			if (empty == false)
 			{
 				// check if turn point is not overlapping
-				bool t = this->checkTPDist(this->getMovementDirection());
+				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
 
-				if (t) {
-
-					this->setMovementDirection(3); // to the left
-
-					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-					tp.setNewDirection(3);
-					// push created tp into turnPoints vector
-
-					this->addTurnPoint(tp);
+				if (overlapping == true)
+				{
+					return;
 				}
+				
 			}
-			
+		
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
+			tp.setNewDirection(3);
+			// push created tp into turnPoints vector
+
+			this->turnPoints.push_back(tp);
 		}
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
+		this->setMovementDirection(1); // set players movementDirection to the left
+
 		// check if there are already any balls collected
 		bool collected = !this->collectedBalls.empty();
 
-		if (collected == false)
-		{
-			this->setMovementDirection(1); // to the right
-		}
-		else
+		if (collected == true)
 		{
 			// check if there are already any turn points
 			bool empty = this->turnPoints.empty();
 
-			if (empty == true)
-			{
-				this->setMovementDirection(1); // to the right
-
-				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-				tp.setNewDirection(1);
-				// push created tp into turnPoints vector
-
-				this->addTurnPoint(tp);
-			}
-			else
+			if (empty == false)
 			{
 				// check if turn point is not overlapping
-				bool t = this->checkTPDist(this->getMovementDirection());
+				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
 
-				if (t) {
-
-					this->setMovementDirection(1); // to the right
-
-					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-					tp.setNewDirection(1);
-					// push created tp into turnPoints vector
-
-					this->addTurnPoint(tp);
+				if (overlapping == true)
+				{
+					return;
 				}
 			}
 
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
+			tp.setNewDirection(1);
+			// push created tp into turnPoints vector
+
+			this->turnPoints.push_back(tp);
 		}
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
+		this->setMovementDirection(4); // set players movementDirection to the left
+
 		// check if there are already any balls collected
 		bool collected = !this->collectedBalls.empty();
 
-		if (collected == false)
-		{
-			this->setMovementDirection(4); // upwards
-		}
-		else
+		if (collected == true)
 		{
 			// check if there are already any turn points
 			bool empty = this->turnPoints.empty();
 
-			if (empty == true)
-			{
-				this->setMovementDirection(4); // upwards
-
-				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-				tp.setNewDirection(4);
-				// push created tp into turnPoints vector
-
-				this->addTurnPoint(tp);
-			}
-			else
+			if (empty == false)
 			{
 				// check if turn point is not overlapping
-				bool t = this->checkTPDist(this->getMovementDirection());
+				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
 
-				if (t) {
-
-					this->setMovementDirection(4); // upwards
-
-					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-					tp.setNewDirection(4);
-					// push created tp into turnPoints vector
-
-					this->addTurnPoint(tp);
+				if (overlapping == true)
+				{
+					return;
 				}
 			}
 
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
+			tp.setNewDirection(4);
+			// push created tp into turnPoints vector
+
+			this->turnPoints.push_back(tp);
 		}
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
+		this->setMovementDirection(2); // set players movementDirection to the left
+
 		// check if there are already any balls collected
 		bool collected = !this->collectedBalls.empty();
 
-		if (collected == false)
-		{
-			this->setMovementDirection(2); // downwards
-		}
-		else
-		{
-			// check if there are already any turn points
+		if (collected == true)
+		{// check if there are already any turn points
 			bool empty = this->turnPoints.empty();
 
-			if (empty == true)
-			{
-				this->setMovementDirection(2); // downwards
-
-				//define new turnpoint
-				TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-				tp.setNewDirection(2);
-				// push created tp into turnPoints vector
-
-				this->addTurnPoint(tp);
-			}
-			else
+			if (empty == false)
 			{
 				// check if turn point is not overlapping
-				bool t = this->checkTPDist(this->getMovementDirection());
+				bool overlapping = this->checkOverlappingTP(this->getMovementDirection());
 
-				if (t) {
-
-					this->setMovementDirection(2); // downwards
-
-					//define new turnpoint
-					TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
-					tp.setNewDirection(2);
-					// push created tp into turnPoints vector
-
-					this->addTurnPoint(tp);
+				if (overlapping == true)
+				{
+					return;
 				}
 			}
 
+			//define new turnpoint
+			TurnPoint tp = TurnPoint(this->getXPos(), this->getYPos());
+			tp.setNewDirection(2);
+			// push created tp into turnPoints vector
+
+			this->turnPoints.push_back(tp);
 		}
 	}
 
@@ -328,10 +233,10 @@ void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 
 }
 
-bool Player::checkTPDist(int mDir)
+bool Player::checkOverlappingTP(int mDir)
 {
 		//check for enough distance between 2 turn points
-		float dist; // distance between last turnPoint and wanted new one at current Player's position
+		float dist = 0; // distance between last turnPoint and wanted new one at current Player's position
 		if (mDir == 1) // to the right
 		{
 			dist = this->getXPos() - this->turnPoints.back().getXPos();
@@ -353,8 +258,52 @@ bool Player::checkTPDist(int mDir)
 
 		if (space == true)
 		{
+			return false;
+		}
+		else {
 			return true;
 		}
+}
+
+void Player::updateSegments()
+{
+	//checks if 2 turnPoints exist in vector turnPoints and then creates a segment ending in the latter turnPoint
+	if (this->turnPoints.size() >= 2)
+	{
+		/*
+		int dir = turnPoints.front().getNewDirection();
+		Segment segment;
+		if (dir == 1 || dir == 3)
+		{
+			segment = Segment(turnPoints.back().getXPos(), dir, this->getSegmentCount());
+			this->setSegmentCount(this->getSegmentCount() + 1);
+		}
+		else if (dir == 2 || dir == 4)
+		{
+			segment = Segment(turnPoints.back().getYPos(), dir, this->getSegmentCount());
+			this->setSegmentCount(this->getSegmentCount() + 1);
+		}
+		turnPoints.erase(this->turnPoints.begin()); // destroys all turnPoints
+		this->segments.push_back(segment); // add created segment to vector segments
+		*/
+		this->turnPoints.erase(this->turnPoints.begin());
+
+	}else if (this->turnPoints.size() == 1) //if only one turnPoint exist, L shape player and balls, create segment from last collected ball to turnPoint
+	{
+		int dir = turnPoints.front().getNewDirection();
+		Segment segment;
+		if (dir == 1 || dir == 3)
+		{
+			segment = Segment(turnPoints.back().getXPos(), dir, this->getSegmentCount());
+			this->setSegmentCount(this->getSegmentCount() + 1);
+		}
+		else if (dir == 2 || dir == 4)
+		{
+			segment = Segment(turnPoints.back().getYPos(), dir, this->getSegmentCount());
+			this->setSegmentCount(this->getSegmentCount() + 1);
+		}
+		this->segments.push_back(segment); // add created segment to vector segments
+	}
 }
 
 
@@ -376,15 +325,13 @@ Player::~Player()
 
 
 //public functions
-void Player::update(sf::RenderTarget* targetWindow, float newSpeed) //sf::RenderTarget* targetWindow
+void Player::update(sf::RenderTarget* targetWindow, float newSpeed)
 {
+	//update the player's variables
 	updateVariables(newSpeed);
 
 	//get keystrokes
 	this->updateInput();
-
-	//if collected ball collides with turn point
-	this->updateTurnPointCollision();
 
 	//move player in direction
 	this->moving();
@@ -395,7 +342,8 @@ void Player::update(sf::RenderTarget* targetWindow, float newSpeed) //sf::Render
 	//update the players collected balls
 	this->updateCollectedBalls();
 
-
+	//update if new segments must be created
+	this->updateSegments();
 
 }
 
@@ -406,16 +354,16 @@ void Player::render(sf::RenderTarget * targetWindow)
 
 	//rendering of the collected balls
 	int i = 0;
-	while (i < this->getCollectedBallsLength())
+	while (i < this->collectedBalls.size())
 	{
 		this->collectedBalls[i].render(targetWindow);
 
 		i++;
 	}
 
-	//render turnpoints
+	//render turnpoints, only for debugging!
 	i = 0;
-	while (i < this->getTurnPointsLength())
+	while (i < this->turnPoints.size())
 	{
 		this->turnPoints[i].render(targetWindow);
 
@@ -452,6 +400,15 @@ float Player::getYPos()
 	return this->getShape().getGlobalBounds().top;
 }
 
+void Player::setSegmentCount(int c)
+{
+	this->segmentCount = c;
+}
+int Player::getSegmentCount()
+{
+	return this->segmentCount;
+}
+
 void Player::addBall(Ball b)
 {
 	this->collectedBalls.push_back(b); // pushes Ball into player's collection of balls vector
@@ -463,11 +420,6 @@ void Player::addBall(Ball b)
 int Player::getCollectedBallsLength()
 {
 	return collectedBalls.size();
-}
-
-void Player::addTurnPoint(TurnPoint tP)
-{
-	this->turnPoints.push_back(tP);
 }
 int Player::getTurnPointsLength()
 {

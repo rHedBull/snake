@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "GameObj.h"
+#include "Segment.h"
 
 class Ball: public GameObj 
 {
@@ -20,6 +21,7 @@ private:
 	void updateVariables(float newSpeed);
 	void initShape(int x, int y);
 	void moving();
+	
 
 
 public:
@@ -34,7 +36,9 @@ public:
 	//public functions
 	void update(float newSpeed);
 	void render(sf::RenderTarget* targetWindow);
+	bool updateSegmentPath(Segment s);
 	void align(float x, float y);
+
 
 
 	//accesors
@@ -43,6 +47,9 @@ public:
 
 	void setRadius(int r);
 	int getRadius();
+
+	float getXPos();
+	float getYPos();
 
 	const sf::CircleShape getShape() const;
 };

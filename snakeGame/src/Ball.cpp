@@ -51,6 +51,8 @@ void Ball::moving()
 		this->shape.move(0.f, -this->getMovementSpeed());
 }
 
+
+
 //constructor
 Ball::Ball()
 {
@@ -73,12 +75,6 @@ void Ball::update(float newSpeed)
 {
 	updateVariables(newSpeed);
 
-	if (this->getMovementDirection() > 0)
-	{
-		this->moving();
-	}
-
-
 }
 
 void Ball::render(sf::RenderTarget* targetWindow)
@@ -92,6 +88,65 @@ void Ball::align(float x, float y)
 	this->shape.setPosition(x, y); //repositions ball
 	logger(1, "Ball has been repositioned at x:" + to_string(x) + ", y:" + to_string(y));
 }
+
+bool Ball::updateSegmentPath(Segment s)
+{
+	//return whether ball has reached segment endPoint an the next segment is needed
+	// true == segment finished, next one needed
+	//false == segment not yet finished, move in current movementDirection
+
+	int dir = s.getDirection();
+	if (s.hasPassed(this->getBallNumb()))
+	{
+		//ball has already finished this segment
+		return true;
+	}
+	if (dir == 1) // to the right
+	{
+		if (this->getXPos() >= s.getEndPoint())
+		{
+			//ball has finished segment, add it to passedBalls vector of the segment
+			s.addPassedBall(this->getBallNumb());
+			return true;
+		}
+	}
+	else if (dir == 2) //downwards
+	{
+		if (this->getYPos() >= s.getEndPoint())
+		{
+			//ball has finished segment, add it to passedBalls vector of the segment
+			s.addPassedBall(this->getBallNumb());
+			return true;
+		}
+	}
+	else if (dir == 3) //to the left
+	{
+		if (this->getXPos() <= s.getEndPoint())
+		{
+			//ball has finished segment, add it to passedBalls vector of the segment
+			s.addPassedBall(this->getBallNumb());
+			return true;
+		}
+
+	}
+	else if (dir == 4)//upwards
+	{
+		if (this->getYPos() <= s.getEndPoint())
+		{
+			//ball has finished segment, add it to passedBalls vector of the segment
+			s.addPassedBall(this->getBallNumb()); 
+			return true;
+		}
+	}
+	else {
+		// ball still has to finish this segment
+		this->setMovementDirection(s.getDirection());
+		this->moving();
+
+		return false;
+	}
+}
+
 
 
 //accesors
@@ -112,6 +167,15 @@ void Ball::setRadius(int r)
 int Ball::getRadius()
 {
 	return this->radius;
+}
+
+float Ball::getXPos()
+{
+	return  this->getShape().getPosition().x;
+}
+float Ball::getYPos()
+{
+	return this->getShape().getGlobalBounds().top;
 }
 
 const sf::CircleShape Ball::getShape() const
