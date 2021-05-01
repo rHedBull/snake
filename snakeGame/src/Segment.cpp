@@ -7,6 +7,7 @@ Segment::Segment()
 {
 
 }
+
 /*
 create instance of segment class
 parameters:
@@ -21,7 +22,7 @@ Segment::Segment(float startPoint, float endPoint, int direction, int id)
 	this->setEndPoint(endPoint);
 	this->setDirection(direction);
 	this->setId(id);
-	logger(1, "segment "+ to_string(id) + " created; dir = " + to_string(this->getDirection()) + ", EndPoint at:" + to_string(this->getEndPoint()));
+	logger(1, "segment "+ to_string(id) + " created; dir = " + to_string(this->getDirection()) + ", StartPoint:" + to_string(this->getStartPoint()) + ", EndPoint:" + to_string(this->getEndPoint()));
 }
 
 //destructor
@@ -68,17 +69,25 @@ void Segment::setId(int id)
 	this->id = id;
 }
 
+/*
+checks if ballNumber numb is already stored in the segments memory of passedBalls
+parameters:
+int numb;
+
+returns:
+true == ballNumber already stored == ball has already passed
+false == ball Number not stored == ball has not yet passed
+*/
 bool Segment::hasPassed(int numb)
 {
-	int i;
-	for (i = 0; i < passedBalls.size(); i++)
+	int i = 0;
+	while(i < this->passedBalls.size())
 	{
-		if (numb == passedBalls[i])
+		if (numb == this->passedBalls[i])
 		{
 			return true;
 		}
 	}
-
 	return false;
 }
 void Segment::addPassedBall(int numb)

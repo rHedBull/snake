@@ -37,10 +37,12 @@ void Game::ballSpawn()
 	this->newBall.push_back(ball); // pushes the newly created ball into the Game classes vector newBall
 }
 
-void Game::reassignBall() {
-	//moves newest collisioned ball from Game to player
-	//deletes old newest ball
-
+/*
+	moves newest collisioned ball from Game to player
+	deletes old newest ball
+*/
+void Game::reassignBall() 
+{
 	int dir = this->player.getMovementDirection();// get movement direction from the player
 
 	//place ball behind the player
@@ -71,13 +73,18 @@ void Game::reassignBall() {
 	logger(1, "old \"newBall\" \'ball\' has been deleted");
 }
 
+/*
+updates collision between player and newest ball
+*/
 void Game::updateCollision()
 {
-	// updates collision between player and newest ball
 	if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
 	{
 		logger(1, "collision occured!");
 		this->reassignBall(); //configure new ball handling
+		//create new segment extra for newly collected ball
+		this->player.createPreliminarySegment(this->player.getMovementDirection());
+		logger(1, "extra segment for ball created");
 		this->ballSpawn(); // creates new ball
 	}
 }

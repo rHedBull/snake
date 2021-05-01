@@ -80,20 +80,22 @@ void Player::updateCollectedBalls()
 		
 		this->collectedBalls[i].update(this->getMovementSpeed());// update the overall game variables
 
-		int s;
-		for (s = 0; s < segments.size(); s++) //update through all currently existing segments
+		int s = 0;
+		while(s < this->segments.size())
 		{
 			Segment seg = this->segments[s];
-			bool obsoleteSegment = this->collectedBalls[i].updateSegmentPath(seg); // send segment an find out if this ball has already finished it
+			// send segment an find out if this ball has already finished it
+			bool obsoleteSegment = this->collectedBalls[i].updateSegmentPath(seg); 
 			if (obsoleteSegment == false) {
-				break; // not yet finished, ball moved, break this segment loop
+				// not yet finished, right settings assigned to ballbreak this segment's loop
+				break; 
 			}
 			else if (obsoleteSegment == true && this->collectedBalls[i].getBallNumb() == this->collectedBalls.back().getBallNumb())
 			{
 				//last collected ball has finished the segment
 
 				segments.erase(this->segments.begin());// delete finished segment
-				logger(1, "segment:" + to_string(seg.getId()) + "finished and deleted");
+				logger(1, "segment: " + to_string(seg.getId()) + " finished and deleted");
 			}
 		}
 
@@ -147,10 +149,14 @@ void Player::updateInput() {
 	bool upKey = sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
 	bool downKey = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
 
+	int newDir = this->getMovementDirection();
+
+	
+
+	
+
 	if (leftKey || rightKey || upKey || downKey)// check if any of the keys is pressed
 	{
-		int newDir = this->getMovementDirection();
-
 		//assign right int to newDirection, according to keysPressed
 		if (leftKey)
 		{
@@ -174,6 +180,12 @@ void Player::updateInput() {
 
 		}
 
+		if (newDir == this->getMovementDirection()) // if there would be no change in direction
+		{
+			return; // exit this method without any further action
+		}
+
+
 		if (this->collectedBalls.empty() == false) // checks if any balls have already been collected
 		{
 			if (this->segments.empty() == false) //checks if there are already any segments
@@ -188,40 +200,8 @@ void Player::updateInput() {
 
 			}
 
-
-			float preEndPoint = 0;
-			float sPoint = 0;
-
-			//assign start point and preliminary endPoints to variables
-			//horizontal
-			if (leftKey)
-			{
-				preEndPoint = -10.0;   //preliminary endPoint
-				sPoint = this->getXPos();
-			}
-			else if (rightKey)
-			{
-				preEndPoint = 100000.0;//preliminary endPoint
-				sPoint = this->getXPos();
-			}
-
-			//vertical
-			if (upKey)
-			{
-				preEndPoint = -10.0;   //preliminary endPoint
-				sPoint = this->getYPos();
-			}
-			else if (downKey)
-			{
-				preEndPoint = 100000.0;//preliminary endPoint
-				sPoint = this->getYPos();
-			}
-
-			// create new segment for balls, endPoint is only perliminary
-			Segment seg = Segment(sPoint, preEndPoint, newDir, this->getSegmentCount());
-			this->segments.push_back(seg); //push created segment into segments vector
-			this->setSegmentCount(this->getSegmentCount() + 1); //count segmentCounter one up
-
+			this->createPreliminarySegment(newDir);
+			
 		}
 
 		this->setMovementDirection(newDir);
@@ -286,13 +266,12 @@ bool Player::checkOverlappingTP(int mDir)
 		}
 }*/
 
-
 /*
 update the last preliminary segment
 */
 void Player::updateSegments()
 {
-	if (this->getMovementDirection() == (1 || 3)) // last movement was horizontal
+	if (this->getMovementDirection() == 1 || this->getMovementDirection() == 3) // last movement was horizontal
 	{
 		//set new Endpoint for last segment
 		this->segments.back().setEndPoint(this->getXPos());
@@ -337,7 +316,7 @@ Player::~Player()
 void Player::update(sf::RenderTarget* targetWindow, float newSpeed)
 {
 	//update the player's variables
-	updateVariables(newSpeed);
+	this->updateVariables(newSpeed);
 
 	//get keystrokes
 	this->updateInput();
@@ -380,6 +359,47 @@ void Player::render(sf::RenderTarget * targetWindow)
 
 		i++;
 	}
+}
+
+/*
+creates preliminary segment according to new movementDirection and pushes it into players segments vector
+parameters:
+int direction;
+*/
+void Player::createPreliminarySegment(int direction)
+{
+	float preEndPoint = 0;
+	float sPoint = 0;
+
+	//assign start point and preliminary endPoints to variables
+	//horizontal
+	if (direction == 3)
+	{
+		preEndPoint = -10.0;   //preliminary endPoint
+		sPoint = this->getXPos();
+	}
+	else if (direction == 1)
+	{
+		preEndPoint = 100000.0;//preliminary endPoint
+		sPoint = this->getXPos();
+	}
+
+	//vertical
+	if (direction == 4)
+	{
+		preEndPoint = -10.0;   //preliminary endPoint
+		sPoint = this->getYPos();
+	}
+	else if (direction == 2)
+	{
+		preEndPoint = 100000.0;//preliminary endPoint
+		sPoint = this->getYPos();
+	}
+
+	// create new segment for balls, endPoint is only perliminary
+	Segment seg = Segment(sPoint, preEndPoint, direction, this->getSegmentCount());
+	this->segments.push_back(seg); //push created segment into segments vector
+	this->setSegmentCount(this->getSegmentCount() + 1); //count segmentCounter one up
 }
 
 

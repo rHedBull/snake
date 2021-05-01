@@ -37,7 +37,7 @@ private:
 	void updateSegments();
 	bool segmentSpacing(int oldDirection);
 
-	
+
 public:
 	//constructor
 	Player();
@@ -50,6 +50,7 @@ public:
 	//public functions
 	void update(sf::RenderTarget* targetWindow, float newSpeed);
 	void render(sf::RenderTarget* targetWindow);
+	void createPreliminarySegment(int direction);
 
 
 	//accessors
