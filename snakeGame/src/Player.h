@@ -36,6 +36,7 @@ private:
 	void updateVariables(float speed);
 	void updateSegments();
 	bool segmentSpacing(int oldDirection);
+	bool opositeDirection(int newDirection);
 
 
 public:

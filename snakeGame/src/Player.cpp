@@ -97,6 +97,7 @@ void Player::updateCollectedBalls()
 				segments.erase(this->segments.begin());// delete finished segment
 				logger(1, "segment: " + to_string(seg.getId()) + " finished and deleted");
 			}
+			s++;
 		}
 
 		i++;
@@ -140,6 +141,50 @@ bool Player::segmentSpacing(int oldDirection)
 }
 
 /*
+checks if int newDirection is directly opposite to the current movementDirection
+paramters:
+int newDirection;
+return:
+true == newDirection is opposite of current direction
+false == if not opposite
+*/
+bool Player::opositeDirection(int newDirection)
+{
+	int currentDirection = this->getMovementDirection();
+
+	if (currentDirection == 1)
+	{
+		if (newDirection == 3)
+		{
+			return true;
+		}
+	}
+	else if (currentDirection == 2)
+	{
+		if (newDirection == 4)
+		{
+			return true;
+		}
+	}
+	else if (currentDirection == 3)
+	{
+		if (newDirection == 1)
+		{
+			return true;
+		}
+	}
+	else if (currentDirection == 4)
+	{
+		if (newDirection == 2)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*
 keypoard input collects the change of directions by ASWD and arrow keys
 */
 void Player::updateInput() {
@@ -150,8 +195,6 @@ void Player::updateInput() {
 	bool downKey = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
 
 	int newDir = this->getMovementDirection();
-
-	
 
 	
 
@@ -180,8 +223,8 @@ void Player::updateInput() {
 
 		}
 
-		if (newDir == this->getMovementDirection()) // if there would be no change in direction
-		{
+		// check if there would be no change in direction, or only in the opposite direction
+		if (newDir == this->getMovementDirection() || opositeDirection(newDir)) {
 			return; // exit this method without any further action
 		}
 

@@ -82,9 +82,13 @@ void Game::updateCollision()
 	{
 		logger(1, "collision occured!");
 		this->reassignBall(); //configure new ball handling
-		//create new segment extra for newly collected ball
-		this->player.createPreliminarySegment(this->player.getMovementDirection());
-		logger(1, "extra segment for ball created");
+		if (this->player.getCollectedBallsLength() == 1)
+		{
+			//create new segment extra for newly collected ball
+			this->player.createPreliminarySegment(this->player.getMovementDirection());
+			logger(1, "extra segment for ball created");
+		}
+
 		this->ballSpawn(); // creates new ball
 	}
 }
