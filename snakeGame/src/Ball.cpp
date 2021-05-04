@@ -1,11 +1,17 @@
 #include "Ball.h"
 #include "Util.h"
 
+
 //private functions
 void Ball::initVars(float w, int numb) {
 	//initialize variables
 	this->setBallNumb(numb);
 	this->setRadius(w/30); // set radius relative to width of window
+}
+
+void Ball::updateVariables(float newSpeed)
+{
+	this->setMovementSpeed(newSpeed);
 }
 
 void Ball::initShape(int x, int y)
@@ -28,9 +34,9 @@ void Ball::initShape(int x, int y)
 
 void Ball::moving()
 {
-	// moves the player every time the function is called in the movementDirection
+	// moves the ball every time the function is called in the movementDirection
 	// 	   so that he moves continuously
-
+	
 	//left
 	if (this->getMovementDirection() == 3)
 		this->shape.move(-this->getMovementSpeed(), 0.f);
@@ -44,6 +50,8 @@ void Ball::moving()
 	else if (this->getMovementDirection() == 4)
 		this->shape.move(0.f, -this->getMovementSpeed());
 }
+
+
 
 //constructor
 Ball::Ball()
@@ -63,13 +71,10 @@ Ball::~Ball()
 
 
 //public functions
-void Ball::update()
+void Ball::update(float newSpeed)
 {
-	if (this->getMovementDirection() > 0)
-	{
-		this->moving();
-	}
-
+	this->updateVariables(newSpeed);
+	this->moving();
 
 }
 
@@ -84,6 +89,71 @@ void Ball::align(float x, float y)
 	this->shape.setPosition(x, y); //repositions ball
 	logger(1, "Ball has been repositioned at x:" + to_string(x) + ", y:" + to_string(y));
 }
+
+/*
+	return whether ball has reached segment endPoint an the next segment is needed
+	true == segment finished, next one needed
+	false == segment not yet finished, set movementDirection according to segment
+	parameters:
+	Segment s;
+*/
+bool Ball::updateSegmentPath(Segment seg)
+{
+	int dir = seg.getDirection();
+
+	//check if this ball has already passed this segment
+	if (seg.hasPassed(this->getBallNumb()))
+	{
+		//ball has already finished this segment
+		return true;
+	}
+
+	bool finishedSegment = false;
+
+	if (dir == 1) // to the right
+	{
+		if (this->getXPos() >= seg.getEndPoint())
+		{
+			finishedSegment = true;
+		}
+	}
+	else if (dir == 2) //downwards
+	{
+		if (this->getYPos() >= seg.getEndPoint())
+		{
+			finishedSegment = true;
+		}
+	}
+	else if (dir == 3) //to the left
+	{
+		if (this->getXPos() <= seg.getEndPoint())
+		{
+			finishedSegment = true;
+		}
+
+	}
+	else if (dir == 4)//upwards
+	{
+		if (this->getYPos() <= seg.getEndPoint())
+		{
+			finishedSegment = true;
+		}
+	}
+
+	if (finishedSegment == true)
+	{
+		//ball has finished segment, add it to passedBalls vector of the segment
+		seg.addPassedBall(this->getBallNumb());
+		return true;
+	}
+	else {
+		// ball still has to finish this segment
+		this->setMovementDirection(seg.getDirection());
+
+		return false;
+	}
+}
+
 
 
 //accesors
@@ -106,22 +176,13 @@ int Ball::getRadius()
 	return this->radius;
 }
 
-void Ball::setMovementSpeed(float v)
+float Ball::getXPos()
 {
-	this->movementSpeed = v;
+	return  this->getShape().getPosition().x;
 }
-float Ball::getMovementSpeed()
+float Ball::getYPos()
 {
-	return this->movementSpeed;
-}
-
-void Ball::setMovementDirection(int r)
-{
-	this->movementDirection = r;
-}
-int Ball::getMovementDirection()
-{
-	return this->movementDirection;
+	return this->getShape().getGlobalBounds().top;
 }
 
 const sf::CircleShape Ball::getShape() const
