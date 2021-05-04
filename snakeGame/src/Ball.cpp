@@ -3,24 +3,30 @@
 
 
 //private functions
+// ---------- init player instance --------------------------------------------------------------------------
+/*
+initialize the ball's variables
+parameters:
+float w; 
+int numb;
+*/
 void Ball::initVars(float w, int numb) {
 	//initialize variables
 	this->setBallNumb(numb);
 	this->setRadius(w/30); // set radius relative to width of window
 }
 
-void Ball::updateVariables(float newSpeed)
+/*
+initialize the ball's circle shape
+parameters:
+int windowWidth;
+int windowHeight;
+*/
+void Ball::initShape(int windowWidth, int windowHeight)
 {
-	this->setMovementSpeed(newSpeed);
-}
-
-void Ball::initShape(int x, int y)
-{
-	//random positions between 0 and 600/ width/ height of window
-	// here must somewhere be an error!, sometimes balls spawn partyl outside the game window
 	int r = this->getRadius();
-	int x_max = x - r;
-	int y_max = y - r;
+	int x_max = windowWidth - r;
+	int y_max = windowHeight - r;
 
 	float x_pos = (rand() % x_max) + 1;
 	float y_pos = (rand() % y_max) + 1;
@@ -28,10 +34,22 @@ void Ball::initShape(int x, int y)
 	this->shape.setFillColor(sf::Color::Red);
 	this->shape.setRadius(r);
 	this->shape.setPosition(x_pos, y_pos);
-	logger(1, "ball (radius:"+ std::to_string(r) + " ) shape initialized at x:" + std::to_string(x_pos) + ", y:" + std::to_string(y_pos));
-	
+	logger(1, "ball (radius:" + std::to_string(r) + " ) shape initialized at x:" + std::to_string(x_pos) + ", y:" + std::to_string(y_pos));
+}
+// ------------------------------------------------------------------------------------------------------
+/*
+update the ball's variables
+parameters:
+float newSpeed;
+*/
+void Ball::updateVariables(float newSpeed)
+{
+	this->setMovementSpeed(newSpeed);
 }
 
+/*
+move the ball in current movementDirection
+*/
 void Ball::moving()
 {
 	// moves the ball every time the function is called in the movementDirection
@@ -50,7 +68,7 @@ void Ball::moving()
 	else if (this->getMovementDirection() == 4)
 		this->shape.move(0.f, -this->getMovementSpeed());
 }
-
+// ------------------------------------------------------------------------------------------------------
 
 
 //constructor
@@ -58,6 +76,14 @@ Ball::Ball()
 {
 
 }
+
+/*
+create instance of the ball class
+parameters:
+float w;
+float h;
+int numb;
+*/
 Ball::Ball(float w, float h, int numb)
 {
 	this->initVars(w, numb);
@@ -68,6 +94,7 @@ Ball::Ball(float w, float h, int numb)
 Ball::~Ball()
 {
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //public functions
@@ -153,11 +180,10 @@ bool Ball::updateSegmentPath(Segment seg)
 		return false;
 	}
 }
-
+// ------------------------------------------------------------------------------------------------------
 
 
 //accesors
-
 int Ball::getBallNumb() const
 {
 	return this->ballNumb;
@@ -185,6 +211,9 @@ float Ball::getYPos()
 	return this->getShape().getGlobalBounds().top;
 }
 
+/*
+returns the ball's shape
+*/
 const sf::CircleShape Ball::getShape() const
 {
 	// returns the shape of this ball

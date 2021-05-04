@@ -23,9 +23,13 @@ private:
 	std::vector <Segment> segments; // collects the segments
 	int segmentCount = 0; // only the total count of all the segments which have ever existed in the game
 
+
 	//private functions
+	// ---------- init player instance --------------------------------------------------------------------------
 	void initVariables(float w, float h);
 	void initShape(float ix, float iy);
+	// ------------------------------------------------------------------------------------------------------
+	// ---------- updating variables and functional methods -------------------------------------------------------------------------------------------
 	void moving();
 	void updateCollectedBalls();
 	void updateInput();
@@ -34,6 +38,7 @@ private:
 	void updateSegments();
 	bool segmentSpacing(int oldDirection);
 	bool opositeDirection(int newDirection);
+	// ------------------------------------------------------------------------------------------------------
 
 
 public:
@@ -69,8 +74,6 @@ public:
 	int getSegmentCount();
 
 	const sf::RectangleShape& getShape() const;
-
-
 };
 
 #endif

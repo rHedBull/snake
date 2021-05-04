@@ -17,12 +17,13 @@ private:
 
 
 	//private functions
+	// ---------- init player instance --------------------------------------------------------------------------
 	void initVars(float w, int numb);
-	void updateVariables(float newSpeed);
 	void initShape(int x, int y);
+	// ------------------------------------------------------------------------------------------------------
+	void updateVariables(float newSpeed);
 	void moving();
 	
-
 
 public:
 	//constructor
@@ -38,7 +39,6 @@ public:
 	void render(sf::RenderTarget* targetWindow);
 	bool updateSegmentPath(Segment s);
 	void align(float x, float y);
-
 
 
 	//accesors

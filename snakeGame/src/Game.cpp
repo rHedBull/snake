@@ -1,7 +1,18 @@
 #include "Game.h"
 #include "Util.h"
+#include <sstream>
 
 //private functions:
+// ---------- init game --------------------------------------------------------------------------
+/*
+intialize all the game's variables and the player object
+parameters:
+int width;
+int height;
+int frameRate;
+float speed;
+std::string name;
+*/
 void Game::initVariables(int width, int height, int frameRate, float speed, std::string name)
 {
 	//initialize game variables
@@ -17,6 +28,9 @@ void Game::initVariables(int width, int height, int frameRate, float speed, std:
 	this->player = Player(this->getHeight()/2, this->getWidth()/2, this->getWidth()/20, this->getHeight()/20);
 }
 
+/*
+initialize the game window
+*/
 void Game::initWindow()
 {
 	//initialize window
@@ -28,7 +42,11 @@ void Game::initWindow()
 	logger(1, "window \'" + this->name + "\' initialized. height:" + std::to_string(this->height) + ", width:"+ std::to_string(this->width));
 	
 }
-
+//------------------------------------------------------------------------------------------------
+//----------- update and render running game -----------------------------------------------------
+/*
+spawns newBall at random position within game window
+*/
 void Game::ballSpawn()
 {
 	//spawn the newest ball
@@ -143,6 +161,7 @@ void Game::updateCollision()
 	}
 	
 }
+//--------------------------------------------------------------------------------------------------
 
 /*
 defines what happens when condition for ending the game are met
@@ -151,9 +170,19 @@ void Game::endGame()
 {
 	logger(1, "game ended");
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //constructor:
+/*
+constructs instance of game class
+parameters:
+int width;
+int height;
+int frameRate;
+float speed;
+std::string name;
+*/
 Game::Game(int width, int height, int frameRate, float speed, std::string name)
 {
 	logger(1, "intialize game");
@@ -164,14 +193,21 @@ Game::Game(int width, int height, int frameRate, float speed, std::string name)
 }
 
 //destructor:
+/*
+called when this instance of the game class is destroyed
+*/
 Game::~Game()
 {
 	delete this->window;
 	logger(1, "window deleted");
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //public functions:
+/*
+collecteds all the Events that happen
+*/
 void Game::pollEvents()
 {
 	//Event polling
@@ -192,14 +228,12 @@ void Game::pollEvents()
 }
 
 /* render the game objects
-	*	- clear old frame
-	*	- render objects
-	*	- display new frame in window
-	*/
+- clear old frame
+- render objects
+- display new frame in window
+*/
 void Game::render()
 {
-	
-	
 	this->window->clear(); //clear
 
 	//render objects
@@ -208,10 +242,14 @@ void Game::render()
 	//render the newBall
 	this->newBall[0].render(this->window); 
 	
+	//this->renderText();
 	//draw game:
 	this->window -> display();
 }
 
+/*
+update all the game's variables and objects
+*/
 void Game::update()
 {
 	// poll for newest events(keypress, ...)
@@ -224,6 +262,7 @@ void Game::update()
 	this->updateCollision();
 
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //accessors:

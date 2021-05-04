@@ -1,20 +1,26 @@
-#include "Util.h"
 #include <ctime>
 #include <fstream>
 #include <string>
 
+#include "Util.h"
+#include <SFML/Graphics.hpp>
+
+/*
+prints string with message  level of message and metadata into logFile and the debug console
+parameters:
+int level;
+string message;
+
+return:
+ string with date, time, log leve, and message
+
+levels:
+1 = INFO
+2 = Warning
+3 = Failure
+*/
 string logger(int level, string message)
 {
-    /*(
-    * input: 
-    * - int level
-    * - string message, what is happening
-    * 
-    * output:
-    * - returns string with date, time, log leve, and message
-    * - prints string in logs.txt file
-    
-    */
     string text;
     string l;
     string m = message;
@@ -65,3 +71,10 @@ string logger(int level, string message)
 
     return text;
 }
+
+/*
+sf::Font font;
+if(!font.loadFromFile(".\res\ARCADECLASSIC.TTF"))
+{
+    logger(1, "error loading the ARCADECLASSIC.TTF font file at relative position: \".\res\ARCADECLASSIC.TTF\"");
+}*/

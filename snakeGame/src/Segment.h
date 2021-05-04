@@ -7,8 +7,9 @@ class Segment
 {
 	/*
 	a straight line from one turn point to another,
-	tells the balls on the segment where to travel until thei reach the segment's endPoint
+	tells the ball on the segment where to travel until it reaches the segment's endPoint
 	*/
+
 private:
 	float endPoint;
 	float startPoint;

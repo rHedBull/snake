@@ -1,9 +1,11 @@
 #include "Player.h"
 #include "Util.h"
+#include "Segment.h"
+#include "GameObj.h"
 
 
 //private functions
-//--------------------------- init Player------------------------------------------------------------
+// ---------- init player instance --------------------------------------------------------------------------
 /*
 initializes the player object's variables
 parameters:
@@ -33,10 +35,9 @@ void Player::initShape(float initialX, float initialY)
 	this->shape.setSize(sf::Vector2f(this->getWidth(), this->getHeight()));
 	this->shape.setPosition(initialX, initialY);
 	logger(1, "player shape initialized at x:" + std::to_string(initialX) + ", y:" + std::to_string(initialY));
-
 }
 // ------------------------------------------------------------------------------------------------------
-
+//----------- updating variables and functional methods -----------------------------------------------------
 /*
 update the Player's variables
 parameters:
@@ -52,9 +53,6 @@ moves the player in the current movementDirection
 */
 void Player::moving()
 {
-	// moves the player every time the function is called in the movementDirection
-	// 	   so that he moves continuously
-	
 	//left
 	if(this->getMovementDirection() == 3)
 		this->shape.move(-this->getMovementSpeed(), 0.f);
@@ -99,7 +97,6 @@ void Player::updateCollectedBalls()
 			}
 			s++;
 		}
-
 		i++;
 	}
 }
@@ -319,6 +316,7 @@ void Player::updateSegments()
 
 	logger(1, "segment " + to_string(segments.back().getId()) + " endPoint updated to: " + to_string(this->segments.back().getEndPoint()));
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //constructor
@@ -342,12 +340,23 @@ Player::Player(float initialX, float initialY, float width, float height)
 }
 
 //destructor
+/*
+called when this instance of the player class is destroyed
+*/
 Player::~Player()
 {
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //public functions
+/*
+update player's variables and move it
+
+parameters:
+sf::RenderTarget* targetWindow;
+float newSpeed;
+*/
 void Player::update(sf::RenderTarget* targetWindow, float newSpeed)
 {
 	//update the player's variables
@@ -388,7 +397,8 @@ void Player::render(sf::RenderTarget * targetWindow)
 }
 
 /*
-creates preliminary segment according to new movementDirection and pushes it into players segments vector
+creates preliminary segment according to new movementDirection 
+and pushes it into players segments vector
 parameters:
 int direction;
 */
@@ -427,6 +437,7 @@ void Player::createPreliminarySegment(int direction)
 	this->segments.push_back(seg); //push created segment into segments vector
 	this->setSegmentCount(this->getSegmentCount() + 1); //count segmentCounter one up
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //accesors
@@ -466,6 +477,11 @@ int Player::getSegmentCount()
 	return this->segmentCount;
 }
 
+/*
+add Ball to player's collectedBalls vector
+parameters:
+Ball b;
+*/
 void Player::addBall(Ball b)
 {
 	this->collectedBalls.push_back(b); // pushes Ball into player's collection of balls vector
@@ -478,14 +494,23 @@ int Player::getCollectedBallsLength()
 {
 	return collectedBalls.size();
 }
+
+/*
+return the collectedBalls vector of the Player
+
+return:
+vector <Ball> collectedBalls;
+*/
 std::vector <Ball> Player::getCollectedBalls()
 {
 	return this->collectedBalls;
 }
 
+/*
+returns the player's shape
+*/
 const sf::RectangleShape& Player::getShape() const
 {
-	//returns the player's shape
 	return this->shape;
 }
 

@@ -29,6 +29,7 @@ private:
 	int frameRate;
 	std::string name;
 
+	std::string uiText;
 
 	// Game objects
 	// player object is created as part of game init
@@ -38,12 +39,18 @@ private:
 	int ballCount = 1;
 
 	//private functions
+
+	// ---------- init game --------------------------------------------------------------------------
 	void initVariables(int width, int height, int frameRate, float speed, std::string name);
 	void initWindow();
+	//------------------------------------------------------------------------------------------------
+	//----------- update and render running game -----------------------------------------------------
 	void ballSpawn();
 	void reassignBall();
-	void updateCollision();
-
+	void updateCollision();	
+	//void renderText(sf::RenderTarget& target);
+	//void updateText();
+	//--------------------------------------------------------------------------------------------------
 	void endGame();
 	
 
