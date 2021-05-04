@@ -73,11 +73,11 @@ void Player::moving()
 update all the from the player collected balls
 */
 void Player::updateCollectedBalls()
-{
+{	
 	int i = 0;
 	while (i < this->collectedBalls.size())// iterate through all collected balls
 	{
-		
+		//update the movement
 		this->collectedBalls[i].update(this->getMovementSpeed());// update the overall game variables
 
 		int s = 0;
@@ -113,28 +113,29 @@ bool Player::segmentSpacing(int oldDirection)
 {
 	bool space = false;
 
+	float safeSpace = this->getCollectedBalls().back().getRadius() * 2.1;
 	if (oldDirection == 1) // to the right -->
 	{
 		// check if enough space between current player position and last segment start
-		space = (this->getXPos() - segments.back().getStartPoint()) > this->getWidth();
+		space = (this->getXPos() - segments.back().getStartPoint()) > safeSpace;
 
 	}
 	else if (oldDirection == 3) // to the left <--
 	{
 		// check if enough space between current player position and last segment start
-		space = (segments.back().getStartPoint() - this->getXPos()) > this->getWidth();
+		space = (segments.back().getStartPoint() - this->getXPos()) > safeSpace;
 
 	}
 	else if (oldDirection == 4) // upwards
 	{
 		// check if enough space between current player position and last segment start
-		space = (segments.back().getStartPoint() - this->getYPos()) > this->getHeight();
+		space = (segments.back().getStartPoint() - this->getYPos()) > safeSpace;
 
 	}
 	else if (oldDirection == 2) //downwards
 	{
 		// check if enough space between current player position and last segment start
-		space = (this->getYPos() - segments.back().getStartPoint()) > this->getHeight();
+		space = (this->getYPos() - segments.back().getStartPoint()) > safeSpace;
 	}
 
 	return space;
@@ -260,54 +261,45 @@ const sf::RenderTarget* target;
 */
 void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
+	/*
+	if (this->getYPos() <= 0.f || this->getYPos() + shape.getGlobalBounds().height >= target->getSize().y || this->getXPos() <= 0.f || this->getXPos() + shape.getGlobalBounds().width >= target->getSize().x)
+	{
+		
+	}
+	*/
+	
+	// lets player stop at game window
 	//Up
 	if (this->getYPos() <= 0.f)
+	{
 		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
+		return;
+	}
+		
 	//Down
 	if (this->getYPos() + shape.getGlobalBounds().height >= target->getSize().y)
+	{
 		this->shape.setPosition(shape.getGlobalBounds().left, target->getSize().y - shape.getGlobalBounds().height);
+		return;
+	}
+		
 
 	//Left
 	if (this->getXPos() <= 0.f)
+	{
 		this->shape.setPosition(0.f, shape.getGlobalBounds().top);
+		return;
+	}
+		
 	//Right
 	if (this->getXPos() + shape.getGlobalBounds().width >= target->getSize().x)
+	{
 		this->shape.setPosition(target->getSize().x - shape.getGlobalBounds().width, shape.getGlobalBounds().top);
+		return;
+	}
+		
 
 }
-
-/*
-bool Player::checkOverlappingTP(int mDir)
-{
-		//check for enough distance between 2 turn points
-		float dist = 0; // distance between last turnPoint and wanted new one at current Player's position
-		if (mDir == 1) // to the right
-		{
-			dist = this->getXPos() - this->turnPoints.back().getXPos();
-		}
-		else if (mDir == 2) //downwards
-		{
-			dist = this->getYPos() - this->turnPoints.back().getYPos();
-		}
-		else if (mDir == 3) // to the left
-		{
-			dist = this->turnPoints.back().getXPos() - this->getXPos();
-		}
-		else if (mDir == 4) //upwards
-		{
-			dist = this->turnPoints.back().getYPos() - this->getYPos();
-		}
-
-		bool space = (dist > this->getWidth() + 5);
-
-		if (space == true)
-		{
-			return false;
-		}
-		else {
-			return true;
-		}
-}*/
 
 /*
 update the last preliminary segment
@@ -390,15 +382,6 @@ void Player::render(sf::RenderTarget * targetWindow)
 	while (i < this->collectedBalls.size())
 	{
 		this->collectedBalls[i].render(targetWindow);
-
-		i++;
-	}
-
-	//render turnpoints, only for debugging!
-	i = 0;
-	while (i < this->turnPoints.size())
-	{
-		this->turnPoints[i].render(targetWindow);
 
 		i++;
 	}
@@ -495,9 +478,9 @@ int Player::getCollectedBallsLength()
 {
 	return collectedBalls.size();
 }
-int Player::getTurnPointsLength()
+std::vector <Ball> Player::getCollectedBalls()
 {
-	return turnPoints.size();
+	return this->collectedBalls;
 }
 
 const sf::RectangleShape& Player::getShape() const

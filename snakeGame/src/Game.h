@@ -43,6 +43,8 @@ private:
 	void ballSpawn();
 	void reassignBall();
 	void updateCollision();
+
+	void endGame();
 	
 
 public:
