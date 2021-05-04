@@ -34,52 +34,122 @@ void Game::ballSpawn()
 	//spawn the newest ball
 	Ball ball = Ball(this->getWidth(), this->getHeight(), this->getBallCount());
 	this->setBallCount(this->getBallCount() + 1);
-	addBall(ball); // pushes the newly created ball into the Game classes vector newBall
+	this->newBall.push_back(ball); // pushes the newly created ball into the Game classes vector newBall
 }
 
-void Game::reassignBall() {
-	//moves newest collisioned ball from Game to player
-	//deletes old newest ball
+/*
+*	places collisioned ball behind player or the last collected ball
+	moves  collisioned ball from Game to player
+	deletes old newest ball
+*/
+void Game::reassignBall() 
+{
+	int dir = 0;
 
-	int dir = this->player.getMovementDirection();// get movement direction from the player
-
-	//place ball behind the player
-	//get player's position
-	float x_pos = this->player.getXPos();
-	float y_pos = this->player.getYPos();
-	float offset = ((this->player.getWidth()) * 1.5) * ((float) this->player.getCollectedBallsLength() + 1.0); // to place ball behind player depends on direction
-	if (dir == 1) // to the right
+	// if no ball collected yet
+	if (this->player.getCollectedBallsLength() == 0)
 	{
-		this->newBall.front().align(x_pos - offset, y_pos);
+		dir = this->player.getMovementDirection();// get movement direction from the player
+
+		//place ball behind the player
+		//get player's position
+		float x_pos = this->player.getXPos();
+		float y_pos = this->player.getYPos();
+		float offset = (this->newBall.front().getRadius() * 2.7); // to place ball behind player depends on direction
+		if (dir == 1) // to the right
+		{
+			this->newBall.front().align(x_pos - offset, y_pos);
+		}
+		else if (dir == 2) // downwards
+		{
+			this->newBall.front().align(x_pos, y_pos - offset);
+		}
+		else if (dir == 3) // to the left
+		{
+			this->newBall.front().align(x_pos + offset, y_pos);
+		}
+		else if (dir == 4) // upwards
+		{
+			this->newBall.front().align(x_pos, y_pos + offset);
+		}
 	}
-	else if (dir == 2) // downwards
+	else // if already collected balls
 	{
-		this->newBall.front().align(x_pos, y_pos - offset);
-	}else if (dir == 3) // to the left
-	{
-		this->newBall.front().align(x_pos + offset, y_pos);
-	}
-	else if (dir == 4) // upwards
-	{
-		this->newBall.front().align(x_pos, y_pos + offset);
-	}	
+		//place newly collected ball behind last collected ball
+		dir = this->player.getCollectedBalls().back().getMovementDirection();
 
+		float x_pos = this->player.getCollectedBalls().back().getXPos();
+		float y_pos = this->player.getCollectedBalls().back().getYPos();
+		float offset = (this->player.getCollectedBalls().back().getRadius() * 2.7);// to place ball behind player depends on direction
+
+		if (dir == 1) // to the right
+		{
+			this->newBall.front().align(x_pos - offset, y_pos);
+		}
+		else if (dir == 2) // downwards
+		{
+			this->newBall.front().align(x_pos, y_pos - offset);
+		}
+		else if (dir == 3) // to the left
+		{
+			this->newBall.front().align(x_pos + offset, y_pos);
+		}
+		else if (dir == 4) // upwards
+		{
+			this->newBall.front().align(x_pos, y_pos + offset);
+		}
+
+	}
+	
+	//assign new movementDirection to ball
+	this->newBall.front().setMovementDirection(dir);
 	
 	this->player.addBall(this->newBall.front()); // moves newest ball to player's ball collection
 
-	this->emptyBall(); // deletes Ball from Game classes vector newBall
+	this->newBall.clear(); // deletes Ball from Game classes vector newBall
 	logger(1, "old \"newBall\" \'ball\' has been deleted");
 }
 
+/*
+updates collision between player and newest ball
+and player and his collected balls
+*/
 void Game::updateCollision()
 {
-	// updates collision between player and newest ball
+	//collision between player and newly created balls
 	if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
 	{
 		logger(1, "collision occured!");
-		this->reassignBall(); //configere new ball handling
+		this->reassignBall(); //configure new ball handling
+		if (this->player.getCollectedBallsLength() == 1)
+		{
+			//create new segment extra for newly collected ball
+			this->player.createPreliminarySegment(this->player.getMovementDirection());
+			logger(1, "extra segment for ball created");
+		}
+
 		this->ballSpawn(); // creates new ball
+		return;
 	}
+
+	int i = 1;
+	while (i < this->player.getCollectedBallsLength())
+	{
+		if (this->player.getShape().getGlobalBounds().intersects(this->player.getCollectedBalls()[i].getShape().getGlobalBounds()))
+		{
+			this->endGame();
+		}
+		i++;
+	}
+	
+}
+
+/*
+defines what happens when condition for ending the game are met
+*/
+void Game::endGame()
+{
+	logger(1, "game ended");
 }
 
 
@@ -121,21 +191,22 @@ void Game::pollEvents()
 		}
 }
 
-void Game::render()
-{
-	/* render the game objects
+/* render the game objects
 	*	- clear old frame
 	*	- render objects
 	*	- display new frame in window
 	*/
+void Game::render()
+{
+	
 	
 	this->window->clear(); //clear
 
 	//render objects
 	this->player.render(this->window);     // also calls rendering for the collected balls!
-	this->newBall[0].render(this->window); //commented out while new Movement scheme is developed
-	
-	
+
+	//render the newBall
+	this->newBall[0].render(this->window); 
 	
 	//draw game:
 	this->window -> display();
@@ -146,13 +217,13 @@ void Game::update()
 	// poll for newest events(keypress, ...)
 	this->pollEvents();
 
-	this->player.update(this->window, this->getMovementSpeed()); //only one instance of player, also calls updating the collected balls
-	
-	//update interactions between multiple objects
-	this->updateCollision(); //commented out while new Movement scheme is developed
+	//only one instance of player, also calls updating the collected balls
+	this->player.update(this->window, this->getMovementSpeed());
+
+	//update collision between player and newBall
+	this->updateCollision();
+
 }
-
-
 
 
 //accessors:
@@ -214,16 +285,4 @@ void Game::setName(std::string n)
 std::string Game::getName()
 {
 	return this->name;
-}
-
-void Game::addBall(Ball b)
-{
-	//add ball to vector newBall of the Game class
-	this->newBall.push_back(b); // vector newBall always has only one element so at index = 0
-}
-void Game::emptyBall()
-{
-	//delete ball from the vector newBall from this instance's Game class
-	this->newBall.pop_back();
-
 }

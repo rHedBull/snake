@@ -12,6 +12,7 @@
 #include "Ball.h"
 #include "Player.h"
 
+
 class Game
 {
 private:
@@ -33,6 +34,7 @@ private:
 	// player object is created as part of game init
 	Player player;  
 	std::vector <Ball> newBall; // always just one element, the newest spanned ball
+
 	int ballCount = 1;
 
 	//private functions
@@ -41,6 +43,8 @@ private:
 	void ballSpawn();
 	void reassignBall();
 	void updateCollision();
+
+	void endGame();
 	
 
 public:
@@ -77,9 +81,6 @@ public:
 
 	void setName(std::string n);
 	std::string getName();
-
-	void addBall(Ball b);
-	void emptyBall();
 };
 
 #endif
