@@ -33,7 +33,6 @@ private:
 	void moving();
 	void updateCollectedBalls();
 	void updateInput();
-	void updateWindowBoundsCollision(const sf::RenderTarget* target);
 	void updateVariables(float speed);
 	void updateSegments();
 	bool segmentSpacing(int oldDirection);
@@ -51,7 +50,7 @@ public:
 
 
 	//public functions
-	void update(sf::RenderTarget* targetWindow, float newSpeed);
+	void update(float newSpeed);
 	void render(sf::RenderTarget* targetWindow);
 	void createPreliminarySegment(int direction);
 

@@ -12,31 +12,7 @@
 #include "Util.h"
 
 
-
-void test() {
-    sf::Font font;
-    if (!font.loadFromFile("./arial.ttf"))
-    {
-        //logger(1, "error loading the ARCADECLASSIC.TTF font file at relative position: \"..\res\ARCADECLASSIC.TTF\"");
-        EXIT_FAILURE;
-    }
-
-    sf::Text text;
-    text.setFont(font);
-    text.setString("this works so far");
-    text.setCharacterSize(10);
-
-    sf::VideoMode vm = sf::VideoMode::VideoMode(400, 400);
-    sf::RenderWindow* window;
-    window = new sf::RenderWindow(vm, "test space" , sf::Style::Titlebar | sf::Style::Close);
-
-    while (true)
-    {
-        window->clear();
-        window->draw(text);
-    }
-   
-    
+void test() { 
 }
 
 void gameLoop() {
@@ -47,25 +23,11 @@ void gameLoop() {
 
     while (game.running())
     {
-        game.setGameState(1); // for debugging
-        if (game.getGameState() == 1) //game is running
-        {
-            //update
-            game.update();
+        //update
+        game.update();
 
-            //render
-            game.render();
-        }
-        else if (game.getGameState() == 0) //game has not  yet started
-        {
-            game.preGameLoop();
-        }
-        else if (game.getGameState() == 2) //game has ended
-        {
-            game.endGame();
-        }
-        
-
+        //render
+        game.render();
     }
     logger(1, "game loop ended");
 }

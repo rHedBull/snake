@@ -195,7 +195,6 @@ void Player::updateInput() {
 	int newDir = this->getMovementDirection();
 
 	
-
 	if (leftKey || rightKey || upKey || downKey)// check if any of the keys is pressed
 	{
 		//assign right int to newDirection, according to keysPressed
@@ -248,53 +247,6 @@ void Player::updateInput() {
 		this->setMovementDirection(newDir);
 
 	}
-
-}
-
-/*
-checks continuously for collision with game Window borders
-parameters:
-const sf::RenderTarget* target;
-*/
-void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
-{
-	/*
-	if (this->getYPos() <= 0.f || this->getYPos() + shape.getGlobalBounds().height >= target->getSize().y || this->getXPos() <= 0.f || this->getXPos() + shape.getGlobalBounds().width >= target->getSize().x)
-	{
-		
-	}
-	*/
-	
-	// lets player stop at game window
-	//Up
-	if (this->getYPos() <= 0.f)
-	{
-		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
-		return;
-	}
-		
-	//Down
-	if (this->getYPos() + shape.getGlobalBounds().height >= target->getSize().y)
-	{
-		this->shape.setPosition(shape.getGlobalBounds().left, target->getSize().y - shape.getGlobalBounds().height);
-		return;
-	}
-		
-
-	//Left
-	if (this->getXPos() <= 0.f)
-	{
-		this->shape.setPosition(0.f, shape.getGlobalBounds().top);
-		return;
-	}
-		
-	//Right
-	if (this->getXPos() + shape.getGlobalBounds().width >= target->getSize().x)
-	{
-		this->shape.setPosition(target->getSize().x - shape.getGlobalBounds().width, shape.getGlobalBounds().top);
-		return;
-	}
-		
 
 }
 
@@ -354,10 +306,9 @@ Player::~Player()
 update player's variables and move it
 
 parameters:
-sf::RenderTarget* targetWindow;
 float newSpeed;
 */
-void Player::update(sf::RenderTarget* targetWindow, float newSpeed)
+void Player::update(float newSpeed)
 {
 	//update the player's variables
 	this->updateVariables(newSpeed);
@@ -368,12 +319,8 @@ void Player::update(sf::RenderTarget* targetWindow, float newSpeed)
 	//move player in direction
 	this->moving();
 
-	//window bounds collision
-	this->updateWindowBoundsCollision(targetWindow);
-
 	//update the players collected balls
 	this->updateCollectedBalls();
-
 }
 
 /*

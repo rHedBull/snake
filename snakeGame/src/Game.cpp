@@ -66,9 +66,9 @@ initialize the text
 void Game::initText()
 {
 	this->uiText.setFont(this->font);
-	this->uiText.setFillColor(sf::Color::Red);
-	this->uiText.setCharacterSize(24);
-	this->uiText.setString("Press any Button to start game");
+	this->uiText.setFillColor(sf::Color::Green);
+	this->uiText.setCharacterSize(25);
+	this->uiText.setString("None");
 }
 //------------------------------------------------------------------------------------------------
 //----------- update and render running game -----------------------------------------------------
@@ -157,8 +157,10 @@ void Game::reassignBall()
 }
 
 /*
-updates collision between player and newest ball
-and player and his collected balls
+updates collisions
+- between player and newest ball
+- between player and his collected balls
+- between player and the window edges
 */
 void Game::updateCollision()
 {
@@ -178,6 +180,7 @@ void Game::updateCollision()
 		return;
 	}
 
+	// update collision between player and his collected balls
 	int i = 1;
 	while (i < this->player.getCollectedBallsLength())
 	{
@@ -187,17 +190,37 @@ void Game::updateCollision()
 		}
 		i++;
 	}
-	
+
+	//check for collision between window edges and player
+	const sf::RenderTarget* target = this->window;
+		if (this->player.getYPos() <= 0.f || this->player.getYPos() + this->player.getShape().getGlobalBounds().height >= target->getSize().y || this->player.getXPos() <= 0.f || this->player.getXPos() + this->player.getShape().getGlobalBounds().width >= target->getSize().x)
+		{
+			this->endGame();
+		}	
 }
 
 /*
-updates the text
+updates the text depending on the current gameState
 */
 void Game::updateUI()
 {
 	stringstream sStream;
-	sStream << "score: " << (this->ballCount  - 1);
-	this->uiText.setString(sStream.str());
+	if (this->getGameState() == 0) //game has not started yet
+	{
+		sStream << "press any Key to start the game";
+		this->uiText.setPosition((this->getWidth()/2) - 150, this->getHeight()/2);
+
+	}else if (this->getGameState() == 1)//game is running
+	{
+		sStream << "score: " << (this->ballCount - 1);
+		this->uiText.setPosition(5, 5);
+	}
+	else if (this->getGameState() == 2)// game ended
+	{
+		sStream << "Game Over! your final score: " << (this->ballCount - 1);
+		this->uiText.setPosition((this->getWidth() / 2) - 150, this->getHeight() / 2);
+	}
+	this->uiText.setString(sStream.str());	
 }
 
 /*
@@ -280,13 +303,17 @@ void Game::render()
 {
 	this->window->clear(); //clear
 
-	//render objects
-	this->player.render(this->window);     // also calls rendering for the collected balls!
+	if (this->getGameState() == 1)
+	{
+		//render objects
+		this->player.render(this->window);     // also calls rendering for the collected balls!
 
-	//render the newBall
-	this->newBall[0].render(this->window); 
-	
+		//render the newBall
+		this->newBall[0].render(this->window);
+	}
+
 	this->renderUI(this->window);
+
 	//draw game:
 	this->window -> display();
 }
@@ -299,16 +326,29 @@ void Game::update()
 	// poll for newest events(keypress, ...)
 	this->pollEvents();
 
+	if (this->getGameState() == 0)
+	{
+		bool leftKey = sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
+		bool rightKey = sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
+		bool upKey = sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
+		bool downKey = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
+
+		if (leftKey || rightKey || upKey || downKey)
+		{
+			this->setGameState(1);
+		}
+
+	}else if (this->getGameState() == 1) // if game is running
+	{
 		//only one instance of player, also calls updating the collected balls
-		this->player.update(this->window, this->getMovementSpeed());
+		this->player.update(this->getMovementSpeed());
 
 		//update collision between player and newBall
 		this->updateCollision();
+	}
 
 		//update what should be printed as text
 		this->updateUI();
-	
-
 }
 
 /*
@@ -316,20 +356,8 @@ defines what happens when condition for ending the game are met
 */
 void Game::endGame()
 {
+	this->setGameState(2);
 	logger(1, "game ended");
-}
-
-/*
-defines what happens before the actual game has started
-*/
-void Game::preGameLoop()
-{
-	renderUI(this->window);
-	/*
-	if (any Key detected)
-	{
-		this->setGameState(1); // game is now actually running
-	}*/
 }
 // ------------------------------------------------------------------------------------------------------
 
