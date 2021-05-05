@@ -1,6 +1,10 @@
+#include <sstream>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+
 #include "Game.h"
 #include "Util.h"
-#include <sstream>
+
 
 //private functions:
 // ---------- init game --------------------------------------------------------------------------
@@ -22,6 +26,8 @@ void Game::initVariables(int width, int height, int frameRate, float speed, std:
 	this->setWidth(width);
 	this->setName(name);
 	this->setMovementSpeed(speed);
+	this->ballCount = 0;
+	this->gameState = 0; // game has not yet started
 	logger(1, "game variables initialized");
 
 	//define Player
@@ -41,6 +47,28 @@ void Game::initWindow()
 	this->window->setFramerateLimit(this->frameRate);
 	logger(1, "window \'" + this->name + "\' initialized. height:" + std::to_string(this->height) + ", width:"+ std::to_string(this->width));
 	
+}
+
+/*
+initialize and load the used fonts
+*/
+void Game::initFont()
+{
+	if (!this->font.loadFromFile("res/arial.ttf"))
+	{
+		logger(3, "Game initFont() could not load \"arial.ttf\" ");
+	}
+}
+
+/*
+initialize the text
+*/
+void Game::initText()
+{
+	this->uiText.setFont(this->font);
+	this->uiText.setFillColor(sf::Color::Red);
+	this->uiText.setCharacterSize(24);
+	this->uiText.setString("Press any Button to start game");
 }
 //------------------------------------------------------------------------------------------------
 //----------- update and render running game -----------------------------------------------------
@@ -161,16 +189,27 @@ void Game::updateCollision()
 	}
 	
 }
-//--------------------------------------------------------------------------------------------------
 
 /*
-defines what happens when condition for ending the game are met
+updates the text
 */
-void Game::endGame()
+void Game::updateUI()
 {
-	logger(1, "game ended");
+	stringstream sStream;
+	sStream << "score: " << (this->ballCount  - 1);
+	this->uiText.setString(sStream.str());
 }
-// ------------------------------------------------------------------------------------------------------
+
+/*
+renders the text to the RenderTarget window
+parameters:
+sf::RenderTarget& target;
+*/
+void Game::renderUI(sf::RenderTarget* target)
+{
+	target->draw(this->uiText);
+}
+//--------------------------------------------------------------------------------------------------
 
 
 //constructor:
@@ -188,7 +227,12 @@ Game::Game(int width, int height, int frameRate, float speed, std::string name)
 	logger(1, "intialize game");
 	this->initVariables(width, height, frameRate, speed,  name);
 	this->initWindow();
+
+	this->initFont();
+	this->initText();
+
 	this->ballSpawn(); //create first ball commented out while new Movement scheme is developed
+
 	logger(1, "game initialized");
 }
 
@@ -242,25 +286,50 @@ void Game::render()
 	//render the newBall
 	this->newBall[0].render(this->window); 
 	
-	//this->renderText();
+	this->renderUI(this->window);
 	//draw game:
 	this->window -> display();
 }
 
 /*
-update all the game's variables and objects
+update all the game's variables and objects as well as the ui
 */
 void Game::update()
 {
 	// poll for newest events(keypress, ...)
 	this->pollEvents();
 
-	//only one instance of player, also calls updating the collected balls
-	this->player.update(this->window, this->getMovementSpeed());
+		//only one instance of player, also calls updating the collected balls
+		this->player.update(this->window, this->getMovementSpeed());
 
-	//update collision between player and newBall
-	this->updateCollision();
+		//update collision between player and newBall
+		this->updateCollision();
 
+		//update what should be printed as text
+		this->updateUI();
+	
+
+}
+
+/*
+defines what happens when condition for ending the game are met
+*/
+void Game::endGame()
+{
+	logger(1, "game ended");
+}
+
+/*
+defines what happens before the actual game has started
+*/
+void Game::preGameLoop()
+{
+	renderUI(this->window);
+	/*
+	if (any Key detected)
+	{
+		this->setGameState(1); // game is now actually running
+	}*/
 }
 // ------------------------------------------------------------------------------------------------------
 
@@ -315,6 +384,15 @@ void Game::setFrameRate(int fR)
 int Game::getFrameRate()
 {
 	return this->frameRate;
+}
+
+void Game::setGameState(int gS)
+{
+	this->gameState = gS;
+}
+int Game::getGameState()
+{
+	return this->gameState;
 }
 
 void Game::setName(std::string n)

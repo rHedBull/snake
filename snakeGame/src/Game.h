@@ -29,29 +29,40 @@ private:
 	int frameRate;
 	std::string name;
 
-	std::string uiText;
+	int gameState;
+	/*
+	0 = game has not yet started
+	1 = game is running
+	2 = game has ended
+	*/
+
+	sf::Text uiText;
+	sf::Font font;
 
 	// Game objects
 	// player object is created as part of game init
 	Player player;  
 	std::vector <Ball> newBall; // always just one element, the newest spanned ball
 
-	int ballCount = 1;
+	int ballCount;
+
 
 	//private functions
 
 	// ---------- init game --------------------------------------------------------------------------
 	void initVariables(int width, int height, int frameRate, float speed, std::string name);
 	void initWindow();
+	void initFont();
+	void initText();
 	//------------------------------------------------------------------------------------------------
 	//----------- update and render running game -----------------------------------------------------
 	void ballSpawn();
 	void reassignBall();
 	void updateCollision();	
-	//void renderText(sf::RenderTarget& target);
-	//void updateText();
+	void renderUI(sf::RenderTarget* target);
+	void updateUI();
 	//--------------------------------------------------------------------------------------------------
-	void endGame();
+
 	
 
 public:
@@ -66,6 +77,9 @@ public:
 	void pollEvents();
 	void update();
 	void render();
+
+	void endGame();
+	void preGameLoop();
 
 
 	//accessors:
@@ -85,6 +99,9 @@ public:
 
 	void setFrameRate(int fR);
 	int getFrameRate();
+
+	void setGameState(int gS);
+	int getGameState();
 
 	void setName(std::string n);
 	std::string getName();

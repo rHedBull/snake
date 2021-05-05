@@ -47,12 +47,24 @@ void gameLoop() {
 
     while (game.running())
     {
-        
-        //update
-        game.update();
+        game.setGameState(1); // for debugging
+        if (game.getGameState() == 1) //game is running
+        {
+            //update
+            game.update();
 
-        //render
-        game.render();
+            //render
+            game.render();
+        }
+        else if (game.getGameState() == 0) //game has not  yet started
+        {
+            game.preGameLoop();
+        }
+        else if (game.getGameState() == 2) //game has ended
+        {
+            game.endGame();
+        }
+        
 
     }
     logger(1, "game loop ended");
