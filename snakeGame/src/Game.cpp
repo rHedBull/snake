@@ -25,9 +25,10 @@ void Game::initVariables(int width, int height, int frameRate, float speed, std:
 	this->setHeight(height);
 	this->setWidth(width);
 	this->setName(name);
-	this->setMovementSpeed(speed);
-	this->ballCount = 0;
-	this->gameState = 0; // game has not yet started
+	this->setInitialMovementSpeed(speed);
+	this->setCurrentMovementSpeed(this->getInitialMovementSpeed());
+	this->setBallCount(0);
+	this->setGameState(0); // game has not yet started
 	logger(1, "game variables initialized");
 
 	//define Player
@@ -167,7 +168,7 @@ void Game::updateCollision()
 	//collision between player and newly created balls
 	if (this->player.getShape().getGlobalBounds().intersects(this->newBall[0].getShape().getGlobalBounds()))
 	{
-		logger(1, "collision occured!");
+		logger(1, "collision with new ball occured!");
 		this->reassignBall(); //configure new ball handling
 		if (this->player.getCollectedBallsLength() == 1)
 		{
@@ -212,12 +213,12 @@ void Game::updateUI()
 
 	}else if (this->getGameState() == 1)//game is running
 	{
-		sStream << "score: " << (this->ballCount - 1);
+		sStream << "score: " << (this->player.getCollectedBallsLength());
 		this->uiText.setPosition(5, 5);
 	}
 	else if (this->getGameState() == 2)// game ended
 	{
-		sStream << "Game Over! your final score: " << (this->ballCount - 1);
+		sStream << "Game Over! your final score: " << (this->player.getCollectedBallsLength()) << "\n" << "\n" << "or Esc to exit the Game";
 		this->uiText.setPosition((this->getWidth() / 2) - 150, this->getHeight() / 2);
 	}
 	this->uiText.setString(sStream.str());	
@@ -231,6 +232,22 @@ sf::RenderTarget& target;
 void Game::renderUI(sf::RenderTarget* target)
 {
 	target->draw(this->uiText);
+}
+
+/*
+restarts the game by setting many variables to their initial value
+*/
+void Game::restartGame()
+{
+	this->setCurrentMovementSpeed(this->getInitialMovementSpeed());
+	this->newBall.clear();
+	this->setBallCount(0);
+	this->ballSpawn();
+	this->setGameState(1);
+
+	//reset the player
+	this->player.restart(this->getHeight() / 2, this->getWidth() / 2);
+	logger(1, "game restarted");
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -341,10 +358,20 @@ void Game::update()
 	}else if (this->getGameState() == 1) // if game is running
 	{
 		//only one instance of player, also calls updating the collected balls
-		this->player.update(this->getMovementSpeed());
+		this->player.update(this->getCurrentMovementSpeed());
 
 		//update collision between player and newBall
 		this->updateCollision();
+	}
+	else if (this->getGameState() == 2)
+	{
+		// check for restart of game
+		bool enterKey = sf::Keyboard::isKeyPressed(sf::Keyboard::Enter);
+
+		if (enterKey)
+		{
+			this->restartGame();
+		}
 	}
 
 		//update what should be printed as text
@@ -369,13 +396,22 @@ const bool Game::running() const
 	return this->window->isOpen();
 }
 
-float Game::getMovementSpeed()
+float Game::getCurrentMovementSpeed()
 {
-	return this->movementSpeed;
+	return this->currentMovementSpeed;
 }
-void Game::setMovementSpeed(float s)
+void Game::setCurrentMovementSpeed(float s)
 {
-	this->movementSpeed = s;
+	this->currentMovementSpeed = s;
+}
+
+float Game::getInitialMovementSpeed()
+{
+	return this->initialMovementSpeed;
+}
+void Game::setInitialMovementSpeed(float iS)
+{
+	this->initialMovementSpeed = iS;
 }
 
 void Game::setBallCount(int c)

@@ -44,7 +44,7 @@ float newSpeed;
 */
 void Ball::updateVariables(float newSpeed)
 {
-	this->setMovementSpeed(newSpeed);
+	this->setCurrentMovementSpeed(newSpeed);
 }
 
 /*
@@ -57,16 +57,16 @@ void Ball::moving()
 	
 	//left
 	if (this->getMovementDirection() == 3)
-		this->shape.move(-this->getMovementSpeed(), 0.f);
+		this->shape.move(-this->getCurrentMovementSpeed(), 0.f);
 	//right
 	else if (this->getMovementDirection() == 1)
-		this->shape.move(this->getMovementSpeed(), 0.f);
+		this->shape.move(this->getCurrentMovementSpeed(), 0.f);
 	//down
 	else if (this->getMovementDirection() == 2)
-		this->shape.move(0.f, this->getMovementSpeed());
+		this->shape.move(0.f, this->getCurrentMovementSpeed());
 	//up
 	else if (this->getMovementDirection() == 4)
-		this->shape.move(0.f, -this->getMovementSpeed());
+		this->shape.move(0.f, -this->getCurrentMovementSpeed());
 }
 // ------------------------------------------------------------------------------------------------------
 

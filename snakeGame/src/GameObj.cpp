@@ -23,11 +23,11 @@ void GameObj::setMovementDirection(int dir)
 	this->movementDirection = dir;
 }
 
-float GameObj::getMovementSpeed()
+float GameObj::getCurrentMovementSpeed()
 {
 	return this->movementSpeed;
 }
-void GameObj::setMovementSpeed(float s)
+void GameObj::setCurrentMovementSpeed(float s)
 {
 	this->movementSpeed = s;
 }

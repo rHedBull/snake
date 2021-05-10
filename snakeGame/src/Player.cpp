@@ -45,7 +45,7 @@ float speed;
 */
 void Player::updateVariables(float speed)
 {
-	this->setMovementSpeed(speed);
+	this->setCurrentMovementSpeed(speed);
 }
 
 /*
@@ -55,16 +55,16 @@ void Player::moving()
 {
 	//left
 	if(this->getMovementDirection() == 3)
-		this->shape.move(-this->getMovementSpeed(), 0.f);
+		this->shape.move(-this->getCurrentMovementSpeed(), 0.f);
 	//right
 	else if (this->getMovementDirection() == 1)
-		this->shape.move(this->getMovementSpeed(), 0.f);
+		this->shape.move(this->getCurrentMovementSpeed(), 0.f);
 	//down
 	else if (this->getMovementDirection() == 2)
-		this->shape.move(0.f, this->getMovementSpeed());
+		this->shape.move(0.f, this->getCurrentMovementSpeed());
 	//up
 	else if (this->getMovementDirection() == 4)
-		this->shape.move(0.f, -this->getMovementSpeed());
+		this->shape.move(0.f, -this->getCurrentMovementSpeed());
 }
 
 /*
@@ -76,7 +76,7 @@ void Player::updateCollectedBalls()
 	while (i < this->collectedBalls.size())// iterate through all collected balls
 	{
 		//update the movement
-		this->collectedBalls[i].update(this->getMovementSpeed());// update the overall game variables
+		this->collectedBalls[i].update(this->getCurrentMovementSpeed());// update the overall game variables
 
 		int s = 0;
 		while(s < this->segments.size())
@@ -383,6 +383,21 @@ void Player::createPreliminarySegment(int direction)
 	Segment seg = Segment(sPoint, preEndPoint, direction, this->getSegmentCount());
 	this->segments.push_back(seg); //push created segment into segments vector
 	this->setSegmentCount(this->getSegmentCount() + 1); //count segmentCounter one up
+}
+
+/*
+restarts the player by setting the variables to their initial value
+*/
+void Player::restart(float initialX, float initialY)
+{
+	//delete all objects from last playthrough
+	this->collectedBalls.clear();
+	this->segments.clear();
+	this->setSegmentCount(0);
+
+	// reposition shape again at initial position
+	this->initShape(initialX, initialY);
+	logger(1, "player restarted");
 }
 // ------------------------------------------------------------------------------------------------------
 

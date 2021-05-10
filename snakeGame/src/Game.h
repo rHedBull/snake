@@ -18,7 +18,8 @@ class Game
 private:
 
 	//private variables
-	float movementSpeed;
+	float initialMovementSpeed;
+	float currentMovementSpeed;
 
 	//window variables
 	sf::RenderWindow* window;
@@ -61,6 +62,7 @@ private:
 	void updateCollision();	
 	void renderUI(sf::RenderTarget* target);
 	void updateUI();
+	void restartGame();
 	//--------------------------------------------------------------------------------------------------
 
 	
@@ -79,14 +81,16 @@ public:
 	void render();
 
 	void endGame();
-	void preGameLoop();
 
 
 	//accessors:
 	const bool running() const;
 
-	float getMovementSpeed();
-	void setMovementSpeed(float s);
+	float getCurrentMovementSpeed();
+	void setCurrentMovementSpeed(float s);
+
+	float getInitialMovementSpeed();
+	void setInitialMovementSpeed(float iS);
 
 	void setBallCount(int c);
 	int getBallCount() const;

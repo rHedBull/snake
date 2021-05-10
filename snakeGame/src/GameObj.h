@@ -37,8 +37,8 @@ public:
 	int getMovementDirection();
 	void setMovementDirection(int dir);
 
-	float getMovementSpeed();
-	void setMovementSpeed(float s);
+	float getCurrentMovementSpeed();
+	void setCurrentMovementSpeed(float s);
 };
 
 #endif

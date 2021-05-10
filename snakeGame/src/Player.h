@@ -53,6 +53,7 @@ public:
 	void update(float newSpeed);
 	void render(sf::RenderTarget* targetWindow);
 	void createPreliminarySegment(int direction);
+	void restart(float initialX, float initialY);
 
 
 	//accessors
