@@ -178,6 +178,7 @@ void Game::updateCollision()
 		}
 
 		this->ballSpawn(); // creates new ball
+		this->setCurrentMovementSpeed(this->getCurrentMovementSpeed() + 0.15);
 		return;
 	}
 

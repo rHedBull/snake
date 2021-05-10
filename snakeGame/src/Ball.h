@@ -19,7 +19,7 @@ private:
 	//private functions
 	// ---------- init player instance --------------------------------------------------------------------------
 	void initVars(float w, int numb);
-	void initShape(int x, int y);
+	void initShape(float x, float y);
 	// ------------------------------------------------------------------------------------------------------
 	void updateVariables(float newSpeed);
 	void moving();

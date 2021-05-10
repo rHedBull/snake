@@ -22,11 +22,11 @@ parameters:
 int windowWidth;
 int windowHeight;
 */
-void Ball::initShape(int windowWidth, int windowHeight)
+void Ball::initShape(float windowWidth, float windowHeight)
 {
 	int r = this->getRadius();
-	int x_max = windowWidth - r;
-	int y_max = windowHeight - r;
+	int x_max = (int) (0.5 + windowWidth - 1.5 * r);
+	int y_max = (int)(0.5 + windowHeight - 1.5 * r);
 
 	float x_pos = (rand() % x_max) + 1;
 	float y_pos = (rand() % y_max) + 1;
@@ -98,6 +98,11 @@ Ball::~Ball()
 
 
 //public functions
+/*
+update the ball  it's variables and moves it
+parameters:
+float newSpeed;
+*/
 void Ball::update(float newSpeed)
 {
 	this->updateVariables(newSpeed);
@@ -105,12 +110,24 @@ void Ball::update(float newSpeed)
 
 }
 
+/*
+render this ball to the targetWindow
+parameters:
+sf::RenderTarget* targetWindow;
+
+*/
 void Ball::render(sf::RenderTarget* targetWindow)
 {
 	//render ball to game window
 	targetWindow->draw(this->shape);
 }
 
+/*
+align the ball at position (x, y)
+parameters:
+float x;
+float y;
+*/
 void Ball::align(float x, float y)
 {
 	this->shape.setPosition(x, y); //repositions ball
@@ -176,7 +193,6 @@ bool Ball::updateSegmentPath(Segment seg)
 	else {
 		// ball still has to finish this segment
 		this->setMovementDirection(seg.getDirection());
-
 		return false;
 	}
 }
