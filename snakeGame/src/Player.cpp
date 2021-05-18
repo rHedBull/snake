@@ -1,49 +1,274 @@
 #include "Player.h"
 #include "Util.h"
-#include "Game.h"
+#include "Segment.h"
+#include "GameObj.h"
+
 
 //private functions
-void Player::initShape()
+// ---------- init player instance --------------------------------------------------------------------------
+/*
+initializes the player object's variables
+parameters:
+float width;
+float height;
+*/
+void Player::initVariables( float width, float height)
 {
-	// create the rectangle
-	this->shape.setFillColor(sf::Color::Green);
-	this->shape.setSize(sf::Vector2f(this->getWidth(), this->getHeight()));
-	this->shape.setPosition(this->getInitX(), this->getInitY());
-	logger(1, "player shape initialized at x:" + std::to_string(this->initX) + ", y:" + std::to_string(this->initY));
-
-}
-
-void Player::initVariables(float iX, float iY, float w, float h)
-{
-	this->setInitX(iX);
-	this->setInitY(iY);
-	this->setWidth(w);
-	this->setHeight(h);
-	this->setMovementSpeed(1.f);
+	this->setWidth(width);
+	this->setHeight(height);
 
 	// set random start direction
 	int r = (rand() % 4) + 1;
 	this->setMovementDirection(r);
 }
 
+/*
+initializes the player object's shape
+parameters:
+float initialX;
+float initialY;
+*/
+void Player::initShape(float initialX, float initialY)
+{
+	// create the rectangle
+	this->shape.setFillColor(sf::Color::Green);
+	this->shape.setSize(sf::Vector2f(this->getWidth(), this->getHeight()));
+	this->shape.setPosition(initialX, initialY);
+	logger(1, "player shape initialized at x:" + std::to_string(initialX) + ", y:" + std::to_string(initialY));
+}
+// ------------------------------------------------------------------------------------------------------
+//----------- updating variables and functional methods -----------------------------------------------------
+/*
+update the Player's variables
+parameters:
+float speed;
+*/
+void Player::updateVariables(float speed)
+{
+	this->setCurrentMovementSpeed(speed);
+}
+
+/*
+moves the player in the current movementDirection
+*/
 void Player::moving()
 {
-	// moves the player every time the function is called in the movementDirection
-	// 	   so that he moves continuously
-
 	//left
 	if(this->getMovementDirection() == 3)
-		this->shape.move(-this->getMovementSpeed(), 0.f);
+		this->shape.move(-this->getCurrentMovementSpeed(), 0.f);
 	//right
 	else if (this->getMovementDirection() == 1)
-		this->shape.move(this->getMovementSpeed(), 0.f);
+		this->shape.move(this->getCurrentMovementSpeed(), 0.f);
 	//down
 	else if (this->getMovementDirection() == 2)
-		this->shape.move(0.f, this->getMovementSpeed());
+		this->shape.move(0.f, this->getCurrentMovementSpeed());
 	//up
 	else if (this->getMovementDirection() == 4)
-		this->shape.move(0.f , -this->getMovementSpeed());
+		this->shape.move(0.f, -this->getCurrentMovementSpeed());
 }
+
+/*
+update all the from the player collected balls
+*/
+void Player::updateCollectedBalls()
+{	
+	int i = 0;
+	while (i < this->collectedBalls.size())// iterate through all collected balls
+	{
+		//update the movement
+		this->collectedBalls[i].update(this->getCurrentMovementSpeed());// update the overall game variables
+
+		int s = 0;
+		while(s < this->segments.size())
+		{
+			Segment seg = this->segments[s];
+			// send segment an find out if this ball has already finished it
+			bool obsoleteSegment = this->collectedBalls[i].updateSegmentPath(seg); 
+			if (obsoleteSegment == false) {
+				// not yet finished, right settings assigned to ballbreak this segment's loop
+				break; 
+			}
+			else if (obsoleteSegment == true && this->collectedBalls[i].getBallNumb() == this->collectedBalls.back().getBallNumb())
+			{
+				//last collected ball has finished the segment
+
+				segments.erase(this->segments.begin());// delete finished segment
+				logger(1, "segment: " + to_string(seg.getId()) + " finished and deleted");
+			}
+			s++;
+		}
+		i++;
+	}
+}
+
+/*
+checks if enough space to last segment
+parameters:
+int oldDirection; 
+*/
+bool Player::segmentSpacing(int oldDirection)
+{
+	bool space = false;
+
+	float safeSpace = this->getCollectedBalls().back().getRadius() * 2.1;
+	if (oldDirection == 1) // to the right -->
+	{
+		// check if enough space between current player position and last segment start
+		space = (this->getXPos() - segments.back().getStartPoint()) > safeSpace;
+
+	}
+	else if (oldDirection == 3) // to the left <--
+	{
+		// check if enough space between current player position and last segment start
+		space = (segments.back().getStartPoint() - this->getXPos()) > safeSpace;
+
+	}
+	else if (oldDirection == 4) // upwards
+	{
+		// check if enough space between current player position and last segment start
+		space = (segments.back().getStartPoint() - this->getYPos()) > safeSpace;
+
+	}
+	else if (oldDirection == 2) //downwards
+	{
+		// check if enough space between current player position and last segment start
+		space = (this->getYPos() - segments.back().getStartPoint()) > safeSpace;
+	}
+
+	return space;
+}
+
+/*
+checks if int newDirection is directly opposite to the current movementDirection
+paramters:
+int newDirection;
+return:
+true == newDirection is opposite of current direction
+false == if not opposite
+*/
+bool Player::opositeDirection(int newDirection)
+{
+	int currentDirection = this->getMovementDirection();
+
+	if (currentDirection == 1)
+	{
+		if (newDirection == 3)
+		{
+			return true;
+		}
+	}
+	else if (currentDirection == 2)
+	{
+		if (newDirection == 4)
+		{
+			return true;
+		}
+	}
+	else if (currentDirection == 3)
+	{
+		if (newDirection == 1)
+		{
+			return true;
+		}
+	}
+	else if (currentDirection == 4)
+	{
+		if (newDirection == 2)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*
+keypoard input collects the change of directions by ASWD and arrow keys
+*/
+void Player::updateInput() {
+	
+	bool leftKey = sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
+	bool rightKey = sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
+	bool upKey = sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
+	bool downKey = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
+
+	int newDir = this->getMovementDirection();
+
+	
+	if (leftKey || rightKey || upKey || downKey)// check if any of the keys is pressed
+	{
+		//assign right int to newDirection, according to keysPressed
+		if (leftKey)
+		{
+			newDir = 3;
+
+		}
+		else if (rightKey)
+		{
+			newDir = 1;
+
+		}
+
+		if (upKey)
+		{
+			newDir = 4;
+
+		}
+		else if (downKey)
+		{
+			newDir = 2;
+
+		}
+
+		// check if there would be no change in direction, or only in the opposite direction
+		if (newDir == this->getMovementDirection() || opositeDirection(newDir)) {
+			return; // exit this method without any further action
+		}
+
+
+		if (this->collectedBalls.empty() == false) // checks if any balls have already been collected
+		{
+			if (this->segments.empty() == false) //checks if there are already any segments
+			{
+				if (segmentSpacing(this->getMovementDirection()) == true) // checks if enough space to last segment
+				{
+					this->updateSegments();
+				}
+				else {
+					return; // exit this method without any further action
+				}
+
+			}
+
+			this->createPreliminarySegment(newDir);
+			
+		}
+
+		this->setMovementDirection(newDir);
+
+	}
+
+}
+
+/*
+update the last preliminary segment
+*/
+void Player::updateSegments()
+{
+	if (this->getMovementDirection() == 1 || this->getMovementDirection() == 3) // last movement was horizontal
+	{
+		//set new Endpoint for last segment
+		this->segments.back().setEndPoint(this->getXPos());
+	}
+	else 
+	{	// last movement was vertical
+		//set new Endpoint for last segment
+		this->segments.back().setEndPoint(this->getYPos());
+	}
+
+	logger(1, "segment " + to_string(segments.back().getId()) + " endPoint updated to: " + to_string(this->segments.back().getEndPoint()));
+}
+// ------------------------------------------------------------------------------------------------------
 
 
 //constructor
@@ -51,94 +276,58 @@ Player::Player()
 {
 
 }
-Player::Player(float iX, float iY, float w, float h)
+
+/*
+creates instance of Player class
+paramters:
+float initialX;
+float initialY;
+float width;
+float height;
+*/
+Player::Player(float initialX, float initialY, float width, float height)
 {
-	this->initVariables( iX,  iY,  w,  h);
-	this->initShape();
+	this->initVariables(width, height);
+	this->initShape(initialX, initialY);
 }
 
 //destructor
+/*
+called when this instance of the player class is destroyed
+*/
 Player::~Player()
 {
-	logger(1, "player destroyed");
 }
+// ------------------------------------------------------------------------------------------------------
 
 
 //public functions
-void Player::update(sf::RenderTarget* targetWindow) //sf::RenderTarget* targetWindow
+/*
+update player's variables and move it
+
+parameters:
+float newSpeed;
+*/
+void Player::update(float newSpeed)
 {
+	//update the player's variables
+	this->updateVariables(newSpeed);
+
 	//get keystrokes
 	this->updateInput();
 
 	//move player in direction
 	this->moving();
 
-	//window bounds collision
-	//targetWindow->getSize();
-	this->updateWindowBoundsCollision(targetWindow);
-
 	//update the players collected balls
-	int i = 0;
-	while (i < this->getCollectedBallsLength())
-	{
-		this->collectedBalls[i].update();
-
-		i++;
-	}
-
+	this->updateCollectedBalls();
 }
 
-void Player::updateCollectedBalls()
-{
-
-}
-
-void Player::updateInput() {
-	//keypoard input collects the change of directions by ASWD and arrow keys
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		this->setMovementDirection(3); // to the left
-		
-
-	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D ) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		this->setMovementDirection(1); // to the right
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		this->setMovementDirection(4); // upward
-
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		this->setMovementDirection(2); // downwards
-	}
-
-}
-
-void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
-{
-	//checks continuously for collision with game Window borders
-	//Up
-	if (shape.getGlobalBounds().top <= 0.f)
-		this->shape.setPosition(shape.getGlobalBounds().left, 0.f);
-	//Down
-	if (shape.getGlobalBounds().top + shape.getGlobalBounds().height >= target->getSize().y)
-		this->shape.setPosition(shape.getGlobalBounds().left, target->getSize().y - shape.getGlobalBounds().height);
-
-	//Left
-	if (shape.getGlobalBounds().left <= 0.f)
-		this->shape.setPosition(0.f, shape.getGlobalBounds().top);
-		//Right
-	if (shape.getGlobalBounds().left + shape.getGlobalBounds().width >= target->getSize().x)
-		this->shape.setPosition(target->getSize().x - shape.getGlobalBounds().width, shape.getGlobalBounds().top);
-	
-
-	
-}
-
+/*
+render all the Player's shapes to the target window
+parameters:
+sf::RenderTarget * targetWindow;
+*/
 void Player::render(sf::RenderTarget * targetWindow)
 {
 	//render player shape to game window
@@ -146,7 +335,7 @@ void Player::render(sf::RenderTarget * targetWindow)
 
 	//rendering of the collected balls
 	int i = 0;
-	while (i < this->getCollectedBallsLength())
+	while (i < this->collectedBalls.size())
 	{
 		this->collectedBalls[i].render(targetWindow);
 
@@ -154,31 +343,66 @@ void Player::render(sf::RenderTarget * targetWindow)
 	}
 }
 
-const sf::RectangleShape & Player::getShape() const
+/*
+creates preliminary segment according to new movementDirection 
+and pushes it into players segments vector
+parameters:
+int direction;
+*/
+void Player::createPreliminarySegment(int direction)
 {
-	//returns the player's shape
-	return this->shape;
+	float preEndPoint = 0;
+	float sPoint = 0;
+
+	//assign start point and preliminary endPoints to variables
+	//horizontal
+	if (direction == 3)
+	{
+		preEndPoint = -10.0;   //preliminary endPoint
+		sPoint = this->getXPos();
+	}
+	else if (direction == 1)
+	{
+		preEndPoint = 100000.0;//preliminary endPoint
+		sPoint = this->getXPos();
+	}
+
+	//vertical
+	if (direction == 4)
+	{
+		preEndPoint = -10.0;   //preliminary endPoint
+		sPoint = this->getYPos();
+	}
+	else if (direction == 2)
+	{
+		preEndPoint = 100000.0;//preliminary endPoint
+		sPoint = this->getYPos();
+	}
+
+	// create new segment for balls, endPoint is only perliminary
+	Segment seg = Segment(sPoint, preEndPoint, direction, this->getSegmentCount());
+	this->segments.push_back(seg); //push created segment into segments vector
+	this->setSegmentCount(this->getSegmentCount() + 1); //count segmentCounter one up
 }
+
+/*
+restarts the player by setting the variables to their initial value
+*/
+void Player::restart(float initialX, float initialY)
+{
+	//delete all objects from last playthrough
+	this->collectedBalls.clear();
+	this->segments.clear();
+	this->setSegmentCount(0);
+
+	// reposition shape again at initial position
+	this->initShape(initialX, initialY);
+	logger(1, "player restarted");
+}
+// ------------------------------------------------------------------------------------------------------
+
 
 //accesors
-void Player::setMovementDirection(int d)
-{
-	this->movementDirection = d;
-}
-int Player::getMovementDirection()
-{
-	return this->movementDirection;
-}
-
-void Player::setMovementSpeed(float s)
-{
-	this->movementSpeed = s;
-}
-float Player::getMovementSpeed()
-{
-	return this->movementSpeed;
-}
-
 void Player::setWidth(float w)
 {
 	this->width = w;
@@ -197,24 +421,29 @@ float Player::getHeight()
 	return this->height;
 }
 
-void Player::setInitX(float iX)
+float Player::getXPos()
 {
-	this->initX = iX;
+	return  this->getShape().getGlobalBounds().left;
 }
-float Player::getInitX()
+float Player::getYPos()
 {
-	return this->initX;
-}
-
-void Player::setInitY(float iY)
-{
-	this->initY = iY;
-}
-float Player::getInitY()
-{
-	return this->initY;
+	return this->getShape().getGlobalBounds().top;
 }
 
+void Player::setSegmentCount(int c)
+{
+	this->segmentCount = c;
+}
+int Player::getSegmentCount()
+{
+	return this->segmentCount;
+}
+
+/*
+add Ball to player's collectedBalls vector
+parameters:
+Ball b;
+*/
 void Player::addBall(Ball b)
 {
 	this->collectedBalls.push_back(b); // pushes Ball into player's collection of balls vector
@@ -222,10 +451,28 @@ void Player::addBall(Ball b)
 
 	//give the newly added ball direction and speed of player to follow him
 	this->collectedBalls.back().setMovementDirection(this->getMovementDirection());
-	this->collectedBalls.back().setMovementSpeed(this->getMovementSpeed());
 }
 int Player::getCollectedBallsLength()
 {
 	return collectedBalls.size();
+}
+
+/*
+return the collectedBalls vector of the Player
+
+return:
+vector <Ball> collectedBalls;
+*/
+std::vector <Ball> Player::getCollectedBalls()
+{
+	return this->collectedBalls;
+}
+
+/*
+returns the player's shape
+*/
+const sf::RectangleShape& Player::getShape() const
+{
+	return this->shape;
 }
 

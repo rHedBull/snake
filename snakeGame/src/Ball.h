@@ -1,74 +1,57 @@
-#pragma once
+#ifndef Ball_H
+#define Ball_H
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
-#include <SFML/Window.hpp>
+#include "GameObj.h"
+#include "Segment.h"
 
-class Ball
+class Ball: public GameObj 
 {
 private:
 	//private variables
-	// 
+	
 	//shape
 	sf::CircleShape shape;
 	int radius;
-
-	//movement
-	float movementSpeed;
-	int movementDirection;
-	/*
-	 1= to the right -->
-	 2 = downwards
-	 3 = to the left <--
-	 4 = upwards
-	*/
+	int ballNumb;
 
 
 	//private functions
-	void initVars(float w);
-	void initShape(int x, int y);
+	// ---------- init player instance --------------------------------------------------------------------------
+	void initVars(float w, int numb);
+	void initShape(float x, float y);
+	// ------------------------------------------------------------------------------------------------------
+	void updateVariables(float newSpeed);
 	void moving();
-
+	
 
 public:
 	//constructor
 	Ball();
-	Ball(float w, float h);
+	Ball(float w, float h, int numb);
 
 	//destructor
 	virtual ~Ball();
 
 
 	//public functions
-	void update();
+	void update(float newSpeed);
 	void render(sf::RenderTarget* targetWindow);
+	bool updateSegmentPath(Segment s);
 	void align(float x, float y);
 
 
 	//accesors
+	int getBallNumb() const;
+	void setBallNumb(int n);
+
 	void setRadius(int r);
 	int getRadius();
-	
-	void setMovementSpeed(int v)
-	{
-		this->movementSpeed = v;
-	}
-	int getMovementSpeed()
-	{
-		return this->movementSpeed;
-	}
 
-	void setMovementDirection(int r)
-	{
-		this->movementDirection = r;
-	}
-	int getMovementDirection()
-	{
-		return this->movementDirection;
-	}
+	float getXPos();
+	float getYPos();
 
 	const sf::CircleShape getShape() const;
 };
 
+#endif

@@ -9,6 +9,9 @@
 ----------------------------------------------------------------------------------------------------------------
 ## resources:
 ### very helpful playlist: https://youtube.com/playlist?list=PL6xSOsbVA1eb_QqMTTcql_3PdOiE928up
-
+### font:  Arcade Classic by
+Jakob Fischer
+jakob@pizzadude.dk
+www.pizzadude.dk
 ## goal
 simple snake game

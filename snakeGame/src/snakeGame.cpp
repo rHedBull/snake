@@ -1,6 +1,5 @@
 // snakeGame.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
-
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -11,30 +10,24 @@
 
 #include "Game.h"
 #include "Util.h"
-#include "Player.h"
-#include "Ball.h"
 
 
-void test() {
-    
+void test() { 
 }
 
 void gameLoop() {
 
-    Game game(600, 600, 70, "Snake Game");
-    
+    Game game(600, 600, 70, 1.0, "Snake Game");
 
     logger(1, "game loop starts");
 
     while (game.running())
     {
-        
         //update
         game.update();
 
         //render
         game.render();
-
     }
     logger(1, "game loop ended");
 }

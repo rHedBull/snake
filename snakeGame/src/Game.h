@@ -1,6 +1,6 @@
-#pragma once
+#ifndef Game_H
+#define Game_H
 
-#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
@@ -9,16 +9,18 @@
 #include <iostream>
 #include <vector>
 
-#include "Player.h"
-#include "Util.h"
 #include "Ball.h"
+#include "Player.h"
+
 
 class Game
 {
 private:
 
 	//private variables
-	
+	float initialMovementSpeed;
+	float currentMovementSpeed;
+
 	//window variables
 	sf::RenderWindow* window;
 	sf::Event ev;
@@ -26,25 +28,48 @@ private:
 	int width;
 	int height;
 	int frameRate;
-	string name;
+	std::string name;
 
+	int gameState;
+	/*
+	0 = game has not yet started
+	1 = game is running
+	2 = game has ended
+	*/
+
+	sf::Text uiText;
+	sf::Font font;
 
 	// Game objects
 	// player object is created as part of game init
 	Player player;  
 	std::vector <Ball> newBall; // always just one element, the newest spanned ball
-	
+
+	int ballCount;
+
 
 	//private functions
-	void initVariables(int width, int height, int frameRate, string name);
+
+	// ---------- init game --------------------------------------------------------------------------
+	void initVariables(int width, int height, int frameRate, float speed, std::string name);
 	void initWindow();
+	void initFont();
+	void initText();
+	//------------------------------------------------------------------------------------------------
+	//----------- update and render running game -----------------------------------------------------
 	void ballSpawn();
 	void reassignBall();
+	void updateCollision();	
+	void renderUI(sf::RenderTarget* target);
+	void updateUI();
+	void restartGame();
+	//--------------------------------------------------------------------------------------------------
+
 	
 
 public:
 	//constructor
-	Game(int width, int height, int frameRate, string name);
+	Game(int width, int height, int frameRate, float speed, std::string name);
 
 	//destructor
 	~Game();
@@ -54,11 +79,21 @@ public:
 	void pollEvents();
 	void update();
 	void render();
-	void updateCollision();
+
+	void endGame();
 
 
 	//accessors:
 	const bool running() const;
+
+	float getCurrentMovementSpeed();
+	void setCurrentMovementSpeed(float s);
+
+	float getInitialMovementSpeed();
+	void setInitialMovementSpeed(float iS);
+
+	void setBallCount(int c);
+	int getBallCount() const;
 
 	void setWidth(int w);
 	int getWidth();
@@ -69,10 +104,11 @@ public:
 	void setFrameRate(int fR);
 	int getFrameRate();
 
-	void setName(string n);
-	string getName();
+	void setGameState(int gS);
+	int getGameState();
 
-	void addBall(Ball b);
-	void emptyBall();
+	void setName(std::string n);
+	std::string getName();
 };
 
+#endif

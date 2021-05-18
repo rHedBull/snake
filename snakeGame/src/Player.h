@@ -1,45 +1,46 @@
-#pragma once
+#ifndef Player_H
+#define Player_H
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
-#include <SFML/Window.hpp>
 #include <vector>
+#include <iostream>
 
 #include "Ball.h"
+#include "GameObj.h"
+#include "Segment.h"
 
-class Player
+
+class Player: public GameObj
 {
 private:
 	//private variables
 	sf::RectangleShape shape;
-	float movementSpeed;
-	int movementDirection;
 	float width;
 	float height;
-	float initX;
-	float initY;
-
-	/*
-	 1= to the right -->
-	 2 = downwards 
-	 3 = to the left <--
-	 4 = upwards
-	*/
 
 	
+	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
+	std::vector <Segment> segments; // collects the segments
+	int segmentCount = 0; // only the total count of all the segments which have ever existed in the game
+
 
 	//private functions
-	void initVariables(float iX, float iY, float w, float h);
-	void initShape();
-	void moving(); 
+	// ---------- init player instance --------------------------------------------------------------------------
+	void initVariables(float w, float h);
+	void initShape(float ix, float iy);
+	// ------------------------------------------------------------------------------------------------------
+	// ---------- updating variables and functional methods -------------------------------------------------------------------------------------------
+	void moving();
 	void updateCollectedBalls();
+	void updateInput();
+	void updateVariables(float speed);
+	void updateSegments();
+	bool segmentSpacing(int oldDirection);
+	bool opositeDirection(int newDirection);
+	// ------------------------------------------------------------------------------------------------------
 
-	std::vector <Ball> collectedBalls; // keeps track of all the balls in the game not collected by player
-	
+
 public:
-
 	//constructor
 	Player();
 	Player(float iX, float iY, float w, float h);
@@ -49,36 +50,30 @@ public:
 
 
 	//public functions
-	const sf::RectangleShape& getShape() const;
-
-	void update(sf::RenderTarget* targetWindow);
-	void updateInput();
-	void updateWindowBoundsCollision(const sf::RenderTarget* target);
+	void update(float newSpeed);
 	void render(sf::RenderTarget* targetWindow);
+	void createPreliminarySegment(int direction);
+	void restart(float initialX, float initialY);
 
 
-	//accesors
-	void setMovementDirection(int d);
-	int getMovementDirection();
-
-	void setMovementSpeed(float s);
-	float getMovementSpeed();
-
+	//accessors
 	void setWidth(float w);
 	float getWidth();
 
 	void setHeight(float h);
 	float getHeight();
 
-	void setInitX(float iX);
-	float getInitX();
-
-	void setInitY(float iY);
-	float getInitY();
+	float getXPos();
+	float getYPos();
 
 	void addBall(Ball b);
 	int getCollectedBallsLength();
+	std::vector <Ball> getCollectedBalls();
+	
+	void setSegmentCount(int c);
+	int getSegmentCount();
 
-
+	const sf::RectangleShape& getShape() const;
 };
 
+#endif
